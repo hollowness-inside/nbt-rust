@@ -15,7 +15,7 @@ pub enum NbtTag {
 }
 
 impl NbtTag {
-    pub fn tag_type(&self) -> u8 {
+    pub const fn tag_type(&self) -> u8 {
         match self {
             NbtTag::End => 0x00,
             NbtTag::Byte(_) => 0x01,
