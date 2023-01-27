@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub enum NbtTag {
     End,
     Byte(u8),

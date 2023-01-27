@@ -1,11 +1,9 @@
 use std::io;
 
-use serde::ser;
-
-use crate::{error::{Result, Error}, NbtTag};
+use crate::{NbtTag, error::Result};
 
 pub struct Serializer<W> {
-    writer: W,
+    writer: W
 }
 
 impl<W: io::Write> Serializer<W> {
@@ -17,15 +15,19 @@ impl<W: io::Write> Serializer<W> {
         self.writer
     }
 
-    fn serialize_tag(&mut self, tag: &NbtTag) -> Result<()> {
+    pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
+        self.serialize_tag(&v.into())
+    }
+
+    pub fn serialize_tag(&mut self, tag: &NbtTag) -> Result<()> {
         match tag {
             NbtTag::End => self.serialize_end(),
-            NbtTag::Byte(value) => self.serialize_byte(value),
-            NbtTag::Short(value) => self.serialize_short(value),
-            NbtTag::Int(value) => self.serialize_int(value),
-            NbtTag::Long(value) => self.serialize_long(value),
-            NbtTag::Float(value) => self.serialize_float(value),
-            NbtTag::Double(value) => self.serialize_double(value),
+            NbtTag::Byte(value) => self.serialize_byte(*value),
+            NbtTag::Short(value) => self.serialize_short(*value),
+            NbtTag::Int(value) => self.serialize_int(*value),
+            NbtTag::Long(value) => self.serialize_long(*value),
+            NbtTag::Float(value) => self.serialize_float(*value),
+            NbtTag::Double(value) => self.serialize_double(*value),
             NbtTag::ByteArray(value) => self.serialize_byte_array(value),
             NbtTag::String(value) => self.serialize_string(value),
             NbtTag::List(value) => self.serialize_list(value),
@@ -35,86 +37,72 @@ impl<W: io::Write> Serializer<W> {
         }
     }
 
-    #[inline]
-    fn serialize_end(&mut self) -> Result<()> {
+    pub fn serialize_end(&mut self) -> Result<()> {
         self.writer.write_all(&[0x00])?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_byte(&mut self, value: &u8) -> Result<()> {
+    pub fn serialize_byte(&mut self, value: u8) -> Result<()> {
         self.writer.write_all(&[0x01])?;
-        self.writer.write_all(&value.to_be_bytes())?;
+        self.writer.write_all(&[value])?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_short(&mut self, value: &i16) -> Result<()> {
+    pub fn serialize_short(&mut self, value: i16) -> Result<()> {
         self.writer.write_all(&[0x02])?;
         self.writer.write_all(&value.to_be_bytes())?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_int(&mut self, value: &i32) -> Result<()> {
+    pub fn serialize_int(&mut self, value: i32) -> Result<()> {
         self.writer.write_all(&[0x03])?;
         self.writer.write_all(&value.to_be_bytes())?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_long(&mut self, value: &i64) -> Result<()> {
+    pub fn serialize_long(&mut self, value: i64) -> Result<()> {
         self.writer.write_all(&[0x04])?;
         self.writer.write_all(&value.to_be_bytes())?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_float(&mut self, value: &f32) -> Result<()> {
+    pub fn serialize_float(&mut self, value: f32) -> Result<()> {
         self.writer.write_all(&[0x05])?;
-        self.writer.write_all(&value.to_bits().to_be_bytes())?;
+        self.writer.write_all(&value.to_be_bytes())?;
         Ok(())
     }
 
-    #[inline]
-    fn serialize_double(&mut self, value: &f64) -> Result<()> {
+    pub fn serialize_double(&mut self, value: f64) -> Result<()> {
         self.writer.write_all(&[0x06])?;
-        self.writer.write_all(&value.to_bits().to_be_bytes())?;
+        self.writer.write_all(&value.to_be_bytes())?;
         Ok(())
     }
 
-    fn serialize_byte_array(&mut self, value: &[u8]) -> Result<()> {
-        let length = value.len() as i32;
-
+    pub fn serialize_byte_array(&mut self, value: &[u8]) -> Result<()> {
         self.writer.write_all(&[0x07])?;
-        self.writer.write_all(&length.to_be_bytes())?;
+        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
         self.writer.write_all(value)?;
         Ok(())
     }
 
-    fn serialize_string(&mut self, value: &str) -> Result<()> {
-        let length = value.len() as u16;
-
+    pub fn serialize_string(&mut self, value: &str) -> Result<()> {
         self.writer.write_all(&[0x08])?;
-        self.writer.write_all(&length.to_be_bytes())?;
+        self.writer.write_all(&(value.len() as i16).to_be_bytes())?;
         self.writer.write_all(value.as_bytes())?;
         Ok(())
     }
 
-    fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
-        let tag_type = value.first().map_or(0x00, |tag| tag.tag_type());
-        let length = value.len() as i32;
-
+    pub fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
         self.writer.write_all(&[0x09])?;
-        self.writer.write_all(&tag_type.to_be_bytes())?;
-        self.writer.write_all(&length.to_be_bytes())?;
+        self.writer.write_all(&value[0].tag_type().to_be_bytes())?;
+        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
         for tag in value {
             self.serialize_tag(tag)?;
         }
         Ok(())
     }
 
-    fn serialize_compound(&mut self, value: &[(String, NbtTag)]) -> Result<()> {
+    pub fn serialize_compound(&mut self, value: &[(String, NbtTag)]) -> Result<()> {
         self.writer.write_all(&[0x0a])?;
         for (name, tag) in value {
             self.serialize_string(name)?;
@@ -124,29 +112,129 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
-    fn serialize_int_array(&mut self, value: &[i32]) -> Result<()> {
-        let length = value.len() as i32;
-
+    pub fn serialize_int_array(&mut self, value: &[i32]) -> Result<()> {
         self.writer.write_all(&[0x0b])?;
-        self.writer.write_all(&length.to_be_bytes())?;
-        for value in value {
-            self.writer.write_all(&value.to_be_bytes())?;
+        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
+        for &int in value {
+            self.writer.write_all(&int.to_be_bytes())?;
         }
         Ok(())
     }
 
-    fn serialize_long_array(&mut self, value: &[i64]) -> Result<()> {
-        let length = value.len() as i32;
-
+    pub fn serialize_long_array(&mut self, value: &[i64]) -> Result<()> {
         self.writer.write_all(&[0x0c])?;
-        self.writer.write_all(&length.to_be_bytes())?;
-        for value in value {
-            self.writer.write_all(&value.to_be_bytes())?;
+        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
+        for &long in value {
+            self.writer.write_all(&long.to_be_bytes())?;
         }
         Ok(())
     }
 }
 
-pub struct Compound<'a, W: io::Write + 'a> {
-    ser: &'a mut Serializer<W>,
+impl From<u32> for NbtTag {
+    fn from(value: u32) -> Self {
+        NbtTag::Int(value as i32)
+    }
+}
+
+impl From<i32> for NbtTag {
+    fn from(value: i32) -> Self {
+        NbtTag::Int(value)
+    }
+}
+
+impl From<u64> for NbtTag {
+    fn from(value: u64) -> Self {
+        NbtTag::Long(value as i64)
+    }
+}
+
+impl From<i64> for NbtTag {
+    fn from(value: i64) -> Self {
+        NbtTag::Long(value)
+    }
+}
+
+impl From<f32> for NbtTag {
+    fn from(value: f32) -> Self {
+        NbtTag::Float(value)
+    }
+}
+
+impl From<f64> for NbtTag {
+    fn from(value: f64) -> Self {
+        NbtTag::Double(value)
+    }
+}
+
+impl From<&str> for NbtTag {
+    fn from(value: &str) -> Self {
+        NbtTag::String(value.to_string())
+    }
+}
+
+impl From<String> for NbtTag {
+    fn from(value: String) -> Self {
+        NbtTag::String(value)
+    }
+}
+
+impl From<Vec<u8>> for NbtTag {
+    fn from(value: Vec<u8>) -> Self {
+        NbtTag::ByteArray(value)
+    }
+}
+
+impl From<&[u8]> for NbtTag {
+    fn from(value: &[u8]) -> Self {
+        NbtTag::ByteArray(value.to_vec())
+    }
+}
+
+impl From<Vec<i32>> for NbtTag {
+    fn from(value: Vec<i32>) -> Self {
+        NbtTag::IntArray(value)
+    }
+}
+
+impl From<&[i32]> for NbtTag {
+    fn from(value: &[i32]) -> Self {
+        NbtTag::IntArray(value.to_vec())
+    }
+}
+
+impl From<Vec<i64>> for NbtTag {
+    fn from(value: Vec<i64>) -> Self {
+        NbtTag::LongArray(value)
+    }
+}
+
+impl From<&[i64]> for NbtTag {
+    fn from(value: &[i64]) -> Self {
+        NbtTag::LongArray(value.to_vec())
+    }
+}
+
+impl From<Vec<NbtTag>> for NbtTag {
+    fn from(value: Vec<NbtTag>) -> Self {
+        NbtTag::List(value)
+    }
+}
+
+impl From<&[NbtTag]> for NbtTag {
+    fn from(value: &[NbtTag]) -> Self {
+        NbtTag::List(value.to_vec())
+    }
+}
+
+impl From<Vec<(String, NbtTag)>> for NbtTag {
+    fn from(value: Vec<(String, NbtTag)>) -> Self {
+        NbtTag::Compound(value)
+    }
+}
+
+impl From<&[(String, NbtTag)]> for NbtTag {
+    fn from(value: &[(String, NbtTag)]) -> Self {
+        NbtTag::Compound(value.to_vec())
+    }
 }
