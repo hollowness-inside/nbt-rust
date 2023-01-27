@@ -146,3 +146,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 }
+
+pub struct Compound<'a, W: io::Write + 'a> {
+    ser: &'a mut Serializer<W>,
+}
