@@ -1,2 +1,5 @@
 mod error;
 mod nbt_tag;
+mod ser;
+
+pub use nbt_tag::NbtTag;
