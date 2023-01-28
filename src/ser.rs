@@ -15,6 +15,23 @@ impl<W: io::Write> Serializer<W> {
         self.writer
     }
 
+    fn serialize_tag(&mut self, v: &NbtTag) -> Result<()> {
+        match v {
+            NbtTag::End => self.write_end(),
+            NbtTag::Byte(v) => self.serialize_u8(*v),
+            NbtTag::Short(v) => self.serialize_i16(*v),
+            NbtTag::Int(v) => self.serialize_i32(*v),
+            NbtTag::Long(v) => self.serialize_i64(*v),
+            NbtTag::Float(v) => self.serialize_f32(*v),
+            NbtTag::Double(v) => self.serialize_f64(*v),
+            NbtTag::ByteArray(v) => self.serialize_byte_array(&v),
+            NbtTag::String(v) => self.serialize_str(&v),
+            NbtTag::List(v) => self.serialize_list(&v),
+            NbtTag::Compound(v) => self.serialize_compound(&v),
+            NbtTag::IntArray(v) => self.serialize_int_array(&v),
+            NbtTag::LongArray(v) => self.serialize_long_array(&v),
+        }
+    }
     fn serialize_bool(&mut self, v: bool) -> Result<()> {
         self.serialize_u8(if v { 1 } else { 0 })
     }
