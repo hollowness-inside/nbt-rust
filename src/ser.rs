@@ -208,7 +208,12 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 }
 
-impl<'a, W> ser::SerializeSeq for &'a mut Serializer<W>
+pub struct SeqSerializer<S> {
+    ser: S,
+    len: Option<usize>,
+    array_type: Option<ArrayType>,
+}
+
 where
     W: io::Write,
 {
