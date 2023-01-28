@@ -15,8 +15,8 @@ impl From<io::Error> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Io(error) => write!(f, "IO error: {}", error),
-            Error::Generic(error) => write!(f, "Generic: {}", error),
+            Error::Io(error) => write!(f, "IO error: {error}"),
+            Error::Generic(error) => write!(f, "Generic: {error}"),
         }
     }
 }
