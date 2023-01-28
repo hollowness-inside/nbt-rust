@@ -191,15 +191,23 @@ impl From<&[u8]> for NbtTag {
     }
 }
 
-impl From<Vec<i32>> for NbtTag {
-    fn from(value: Vec<i32>) -> Self {
-        NbtTag::IntArray(value)
-    }
+impl<'a, W> ser::SerializeTuple for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        value.serialize(&mut **self)
 }
 
-impl From<&[i32]> for NbtTag {
-    fn from(value: &[i32]) -> Self {
-        NbtTag::IntArray(value.to_vec())
+    fn end(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
     }
 }
 
