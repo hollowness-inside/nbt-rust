@@ -344,3 +344,30 @@ where
         Ok(())
     }
 }
+
+impl<'a, W> ser::SerializeStructVariant for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        key: &'static str,
+        value: &T,
+    ) -> std::result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        self.writer.write_all(&[prefixes::STRING])?;
+        self.writer.write_all(&(key.len() as i32).to_be_bytes())?;
+        self.writer.write_all(key.as_bytes())?;
+        value.serialize(&mut **self)
+    }
+
+    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
+    
+    }
+}
