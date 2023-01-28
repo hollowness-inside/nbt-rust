@@ -223,6 +223,7 @@ pub enum SeqType {
 pub struct SeqSerializer<S, T> {
     ser: S,
     len: Option<usize>,
+    is_first: bool,
     seq_type: PhantomData<T>,
 }
 
