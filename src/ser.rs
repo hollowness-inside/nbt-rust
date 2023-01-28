@@ -215,15 +215,23 @@ impl From<&[i64]> for NbtTag {
     }
 }
 
-impl From<Vec<NbtTag>> for NbtTag {
-    fn from(value: Vec<NbtTag>) -> Self {
-        NbtTag::List(value)
-    }
+impl<'a, W> ser::SerializeTupleVariant for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        value.serialize(&mut **self)
 }
 
-impl From<&[NbtTag]> for NbtTag {
-    fn from(value: &[NbtTag]) -> Self {
-        NbtTag::List(value.to_vec())
+    fn end(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
     }
 }
 
