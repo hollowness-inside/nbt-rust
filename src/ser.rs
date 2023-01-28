@@ -183,11 +183,24 @@ impl From<Vec<u8>> for NbtTag {
     fn from(value: Vec<u8>) -> Self {
         NbtTag::ByteArray(value)
     }
+
+impl<'a, W> ser::SerializeSeq for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        value.serialize(&mut **self)
 }
 
-impl From<&[u8]> for NbtTag {
-    fn from(value: &[u8]) -> Self {
-        NbtTag::ByteArray(value.to_vec())
+    fn end(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
     }
 }
 
