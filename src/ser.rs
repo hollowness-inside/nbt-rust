@@ -226,6 +226,20 @@ pub struct SeqSerializer<S, T> {
     seq_type: PhantomData<T>,
 }
 
+impl<S: serde::Serializer, T> SeqSerializer<S, T> {
+    pub fn set_type(self, seq_type: SeqType) -> SeqSerializer<S, T> {
+        SeqSerializer {
+            ser: self.ser,
+            len: self.len,
+            seq_type: match seq_type {
+                SeqType::ByteArray => PhantomData::<ByteArray>,
+                SeqType::LongArray => PhantomData::<LongArray>,
+                SeqType::IntArray => PhantomData::<IntArray>,
+                SeqType::List => PhantomData::<List>,
+            },
+        }
+    }
+}
 where
     W: io::Write,
 {
