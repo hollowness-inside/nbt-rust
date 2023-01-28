@@ -1,3 +1,19 @@
+pub(crate) mod prefixes {
+    pub const END: u8 = 0x00;
+    pub const BYTE: u8 = 0x01;
+    pub const SHORT: u8 = 0x02;
+    pub const INT: u8 = 0x03;
+    pub const LONG: u8 = 0x04;
+    pub const FLOAT: u8 = 0x05;
+    pub const DOUBLE: u8 = 0x06;
+    pub const BYTE_ARRAY: u8 = 0x07;
+    pub const STRING: u8 = 0x08;
+    pub const LIST: u8 = 0x09;
+    pub const COMPOUND: u8 = 0x0a;
+    pub const INT_ARRAY: u8 = 0x0b;
+    pub const LONG_ARRAY: u8 = 0x0c;
+}
+
 #[derive(Clone)]
 pub enum NbtTag {
     End,
