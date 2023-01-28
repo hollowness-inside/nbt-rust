@@ -1,9 +1,15 @@
 use std::io;
 
-use crate::{NbtTag, error::Result};
+use serde::ser;
+
+use crate::{
+    error::{Error, Result},
+    nbt_tag::{self, prefixes},
+    NbtTag,
+};
 
 pub struct Serializer<W> {
-    writer: W
+    writer: W,
 }
 
 impl<W: io::Write> Serializer<W> {
@@ -15,9 +21,24 @@ impl<W: io::Write> Serializer<W> {
         self.writer
     }
 
-    pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
-        self.serialize_tag(&v.into())
-    }
+    // fn serialize_int_array(&mut self, value: &[i32]) -> Result<()> {
+    //     self.writer.write_all(&[0x0b])?;
+    //     self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
+    //     for &int in value {
+    //         self.writer.write_all(&int.to_be_bytes())?;
+    //     }
+    //     Ok(())
+    // }
+
+    // fn serialize_long_array(&mut self, value: &[i64]) -> Result<()> {
+    //     self.writer.write_all(&[0x0c])?;
+    //     self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
+    //     for &long in value {
+    //         self.writer.write_all(&long.to_be_bytes())?;
+    //     }
+    //     Ok(())
+    // }
+}
 
 impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
@@ -91,7 +112,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 
     fn serialize_char(self, v: char) -> Result<()> {
         self.serialize_u8(v as u8)
-        }
+    }
 
     fn serialize_str(self, v: &str) -> Result<()> {
         self.writer.write_all(&[prefixes::STRING])?;
@@ -117,11 +138,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         T: serde::Serialize,
     {
         value.serialize(self)
-}
+    }
 
     fn serialize_unit(self) -> Result<()> {
         todo!()
-}
+    }
 
     fn serialize_unit_struct(self, name: &'static str) -> Result<()> {
         todo!()
@@ -134,7 +155,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         variant: &'static str,
     ) -> Result<()> {
         todo!()
-}
+    }
 
     fn serialize_newtype_struct<T: ?Sized>(self, name: &'static str, value: &T) -> Result<()>
     where
@@ -154,7 +175,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         T: serde::Serialize,
     {
         todo!()
-}
+    }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
         if let Some(len) = len {
@@ -162,9 +183,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
             self.writer.write_all(&(len as i32).to_be_bytes())?;
             Ok(self)
         } else {
-            return Err(Error::Generic("Cannot serialize a sequence with unknown length".to_string()));
+            return Err(Error::Generic(
+                "Cannot serialize a sequence with unknown length".to_string(),
+            ));
+        }
     }
-}
 
     fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
         todo!()
@@ -176,7 +199,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
         todo!()
-}
+    }
 
     fn serialize_tuple_variant(
         self,
@@ -190,7 +213,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 
     fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
         todo!()
-}
+    }
 
     fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
         todo!()
@@ -204,9 +227,8 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         todo!()
-}
-
     }
+}
 
 impl<'a, W> ser::SerializeSeq for &'a mut Serializer<W>
 where
@@ -220,7 +242,7 @@ where
         T: ?Sized + ser::Serialize,
     {
         value.serialize(&mut **self)
-}
+    }
 
     fn end(self) -> Result<()> {
         self.writer.write_all(&[prefixes::END])?;
@@ -240,7 +262,7 @@ where
         T: ?Sized + ser::Serialize,
     {
         value.serialize(&mut **self)
-}
+    }
 
     fn end(self) -> Result<()> {
         self.writer.write_all(&[prefixes::END])?;
@@ -260,7 +282,7 @@ where
         T: ?Sized + ser::Serialize,
     {
         value.serialize(&mut **self)
-}
+    }
 
     fn end(self) -> Result<()> {
         self.writer.write_all(&[prefixes::END])?;
@@ -280,7 +302,7 @@ where
         T: ?Sized + ser::Serialize,
     {
         value.serialize(&mut **self)
-}
+    }
 
     fn end(self) -> Result<()> {
         self.writer.write_all(&[prefixes::END])?;
@@ -307,7 +329,7 @@ where
         T: ?Sized + ser::Serialize,
     {
         value.serialize(&mut **self)
-}
+    }
 
     fn end(self) -> Result<()> {
         self.writer.write_all(&[prefixes::END])?;
