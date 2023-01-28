@@ -34,19 +34,19 @@ pub enum NbtTag {
 impl NbtTag {
     pub const fn tag_type(&self) -> u8 {
         match self {
-            NbtTag::End => 0x00,
-            NbtTag::Byte(_) => 0x01,
-            NbtTag::Short(_) => 0x02,
-            NbtTag::Int(_) => 0x03,
-            NbtTag::Long(_) => 0x04,
-            NbtTag::Float(_) => 0x05,
-            NbtTag::Double(_) => 0x06,
-            NbtTag::ByteArray(_) => 0x07,
-            NbtTag::String(_) => 0x08,
-            NbtTag::List(_) => 0x09,
-            NbtTag::Compound(_) => 0x0a,
-            NbtTag::IntArray(_) => 0x0b,
-            NbtTag::LongArray(_) => 0x0c,
+            NbtTag::End => prefixes::END,
+            NbtTag::Byte(_) => prefixes::BYTE,
+            NbtTag::Short(_) => prefixes::SHORT,
+            NbtTag::Int(_) => prefixes::INT,
+            NbtTag::Long(_) => prefixes::LONG,
+            NbtTag::Float(_) => prefixes::FLOAT,
+            NbtTag::Double(_) => prefixes::DOUBLE,
+            NbtTag::ByteArray(_) => prefixes::BYTE_ARRAY,
+            NbtTag::String(_) => prefixes::STRING,
+            NbtTag::List(_) => prefixes::LIST,
+            NbtTag::Compound(_) => prefixes::COMPOUND,
+            NbtTag::IntArray(_) => prefixes::INT_ARRAY,
+            NbtTag::LongArray(_) => prefixes::LONG_ARRAY,
         }
     }
 }
