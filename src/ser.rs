@@ -212,4 +212,13 @@ impl<W: io::Write> Serializer<W> {
         }
         Ok(())
     }
+
+    fn serialize_long_array(&mut self, v: &[i64]) -> Result<()> {
+        self.writer.write_all(&[prefixes::INT_ARRAY])?;
+        self.writer.write_all(&(v.len() as i32).to_be_bytes())?;
+        for i in v {
+            self.writer.write_all(&i.to_be_bytes())?;
+        }
+        Ok(())
+    }
 }
