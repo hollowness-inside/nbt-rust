@@ -219,9 +219,11 @@ pub enum SeqType {
     IntArray,
     List,
 }
+
+pub struct SeqSerializer<S, T> {
     ser: S,
     len: Option<usize>,
-    array_type: Option<ArrayType>,
+    seq_type: PhantomData<T>,
 }
 
 where
