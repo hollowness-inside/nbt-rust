@@ -1,6 +1,6 @@
-use std::io;
+use std::{io, marker::PhantomData};
 
-use serde::ser;
+use serde::{ser, Serialize};
 
 use crate::{
     error::{Error, Result},
