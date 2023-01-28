@@ -56,7 +56,6 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
             prefixes::LIST => {
                 let mut buf = [0; 1];
                 reader.read_exact(&mut buf)?;
-                let tag_type = buf[0];
 
                 let mut buf = [0; 4];
                 reader.read_exact(&mut buf)?;
