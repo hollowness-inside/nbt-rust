@@ -19,169 +19,193 @@ impl<W: io::Write> Serializer<W> {
         self.serialize_tag(&v.into())
     }
 
-    pub fn serialize_tag(&mut self, tag: &NbtTag) -> Result<()> {
-        match tag {
-            NbtTag::End => self.serialize_end(),
-            NbtTag::Byte(value) => self.serialize_byte(*value),
-            NbtTag::Short(value) => self.serialize_short(*value),
-            NbtTag::Int(value) => self.serialize_int(*value),
-            NbtTag::Long(value) => self.serialize_long(*value),
-            NbtTag::Float(value) => self.serialize_float(*value),
-            NbtTag::Double(value) => self.serialize_double(*value),
-            NbtTag::ByteArray(value) => self.serialize_byte_array(value),
-            NbtTag::String(value) => self.serialize_string(value),
-            NbtTag::List(value) => self.serialize_list(value),
-            NbtTag::Compound(value) => self.serialize_compound(value),
-            NbtTag::IntArray(value) => self.serialize_int_array(value),
-            NbtTag::LongArray(value) => self.serialize_long_array(value),
+impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
+    type Ok = ();
+    type Error = Error;
+
+    type SerializeSeq = Self;
+    type SerializeTuple = Self;
+    type SerializeTupleStruct = Self;
+    type SerializeTupleVariant = Self;
+
+    type SerializeMap = Self;
+    type SerializeStruct = Self;
+    type SerializeStructVarian = Self;
+    type SerializeStructVariant = Self;
+
+    fn serialize_bool(self, v: bool) -> Result<()> {
+        self.serialize_u8(if v { 1 } else { 0 })
+    }
+
+    fn serialize_u8(self, v: u8) -> Result<()> {
+        self.writer.write_all(&[prefixes::BYTE])?;
+        self.writer.write_all(&[v])?;
+        Ok(())
+    }
+
+    fn serialize_i8(self, v: i8) -> Result<()> {
+        self.serialize_u8(v as u8)
+    }
+
+    fn serialize_u16(self, v: u16) -> Result<()> {
+        self.writer.write_all(&[prefixes::SHORT])?;
+        self.writer.write_all(&v.to_be_bytes())?;
+        Ok(())
+    }
+
+    fn serialize_i16(self, v: i16) -> Result<()> {
+        self.serialize_u16(v as u16)
+    }
+
+    fn serialize_u32(self, v: u32) -> Result<()> {
+        self.writer.write_all(&[prefixes::INT])?;
+        self.writer.write_all(&v.to_be_bytes())?;
+        Ok(())
+    }
+
+    fn serialize_i32(self, v: i32) -> Result<()> {
+        self.serialize_u32(v as u32)
+    }
+
+    fn serialize_u64(self, v: u64) -> Result<()> {
+        self.writer.write_all(&[prefixes::LONG])?;
+        self.writer.write_all(&v.to_be_bytes())?;
+        Ok(())
+    }
+
+    fn serialize_i64(self, v: i64) -> Result<()> {
+        self.serialize_u64(v as u64)
+    }
+
+    fn serialize_f32(self, v: f32) -> Result<()> {
+        self.writer.write_all(&[prefixes::FLOAT])?;
+        self.writer.write_all(&v.to_be_bytes())?;
+        Ok(())
+    }
+
+    fn serialize_f64(self, v: f64) -> Result<()> {
+        self.writer.write_all(&[prefixes::DOUBLE])?;
+        self.writer.write_all(&v.to_be_bytes())?;
+        Ok(())
+    }
+
+    fn serialize_char(self, v: char) -> Result<()> {
+        self.serialize_u8(v as u8)
         }
-    }
 
-    pub fn serialize_end(&mut self) -> Result<()> {
-        self.writer.write_all(&[0x00])?;
+    fn serialize_str(self, v: &str) -> Result<()> {
+        self.writer.write_all(&[prefixes::STRING])?;
+        self.writer.write_all(&(v.len() as i16).to_be_bytes())?;
+        self.writer.write_all(v.as_bytes())?;
         Ok(())
     }
 
-    pub fn serialize_byte(&mut self, value: u8) -> Result<()> {
-        self.writer.write_all(&[0x01])?;
-        self.writer.write_all(&[value])?;
+    fn serialize_bytes(self, v: &[u8]) -> Result<()> {
+        self.writer.write_all(&[prefixes::BYTE_ARRAY])?;
+        self.writer.write_all(&(v.len() as i32).to_be_bytes())?;
+        self.writer.write_all(v)?;
         Ok(())
     }
 
-    pub fn serialize_short(&mut self, value: i16) -> Result<()> {
-        self.writer.write_all(&[0x02])?;
-        self.writer.write_all(&value.to_be_bytes())?;
+    fn serialize_none(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
         Ok(())
     }
 
-    pub fn serialize_int(&mut self, value: i32) -> Result<()> {
-        self.writer.write_all(&[0x03])?;
-        self.writer.write_all(&value.to_be_bytes())?;
-        Ok(())
+    fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(self)
+}
+
+    fn serialize_unit(self) -> Result<()> {
+        todo!()
+}
+
+    fn serialize_unit_struct(self, name: &'static str) -> Result<()> {
+        todo!()
     }
 
-    pub fn serialize_long(&mut self, value: i64) -> Result<()> {
-        self.writer.write_all(&[0x04])?;
-        self.writer.write_all(&value.to_be_bytes())?;
-        Ok(())
+    fn serialize_unit_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+    ) -> Result<()> {
+        todo!()
+}
+
+    fn serialize_newtype_struct<T: ?Sized>(self, name: &'static str, value: &T) -> Result<()>
+    where
+        T: serde::Serialize,
+    {
+        todo!()
     }
 
-    pub fn serialize_float(&mut self, value: f32) -> Result<()> {
-        self.writer.write_all(&[0x05])?;
-        self.writer.write_all(&value.to_be_bytes())?;
-        Ok(())
-    }
+    fn serialize_newtype_variant<T: ?Sized>(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        value: &T,
+    ) -> Result<()>
+    where
+        T: serde::Serialize,
+    {
+        todo!()
+}
 
-    pub fn serialize_double(&mut self, value: f64) -> Result<()> {
-        self.writer.write_all(&[0x06])?;
-        self.writer.write_all(&value.to_be_bytes())?;
-        Ok(())
-    }
-
-    pub fn serialize_byte_array(&mut self, value: &[u8]) -> Result<()> {
-        self.writer.write_all(&[0x07])?;
-        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-        self.writer.write_all(value)?;
-        Ok(())
-    }
-
-    pub fn serialize_string(&mut self, value: &str) -> Result<()> {
-        self.writer.write_all(&[0x08])?;
-        self.writer.write_all(&(value.len() as i16).to_be_bytes())?;
-        self.writer.write_all(value.as_bytes())?;
-        Ok(())
-    }
-
-    pub fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
-        self.writer.write_all(&[0x09])?;
-        self.writer.write_all(&value[0].tag_type().to_be_bytes())?;
-        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-        for tag in value {
-            self.serialize_tag(tag)?;
-        }
-        Ok(())
-    }
-
-    pub fn serialize_compound(&mut self, value: &[(String, NbtTag)]) -> Result<()> {
-        self.writer.write_all(&[0x0a])?;
-        for (name, tag) in value {
-            self.serialize_string(name)?;
-            self.serialize_tag(tag)?;
-        }
-        self.serialize_end()?;
-        Ok(())
-    }
-
-    pub fn serialize_int_array(&mut self, value: &[i32]) -> Result<()> {
-        self.writer.write_all(&[0x0b])?;
-        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-        for &int in value {
-            self.writer.write_all(&int.to_be_bytes())?;
-        }
-        Ok(())
-    }
-
-    pub fn serialize_long_array(&mut self, value: &[i64]) -> Result<()> {
-        self.writer.write_all(&[0x0c])?;
-        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-        for &long in value {
-            self.writer.write_all(&long.to_be_bytes())?;
-        }
-        Ok(())
+    fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
+        if let Some(len) = len {
+            self.writer.write_all(&[prefixes::LIST])?;
+            self.writer.write_all(&(len as i32).to_be_bytes())?;
+            Ok(self)
+        } else {
+            return Err(Error::Generic("Cannot serialize a sequence with unknown length".to_string()));
     }
 }
 
-impl From<u32> for NbtTag {
-    fn from(value: u32) -> Self {
-        NbtTag::Int(value as i32)
+    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
+        todo!()
     }
+
+    fn serialize_tuple_struct(
+        self,
+        name: &'static str,
+        len: usize,
+    ) -> Result<Self::SerializeTupleStruct> {
+        todo!()
 }
 
-impl From<i32> for NbtTag {
-    fn from(value: i32) -> Self {
-        NbtTag::Int(value)
+    fn serialize_tuple_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        len: usize,
+    ) -> Result<Self::SerializeTupleVariant> {
+        todo!()
     }
+
+    fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
+        todo!()
 }
 
-impl From<u64> for NbtTag {
-    fn from(value: u64) -> Self {
-        NbtTag::Long(value as i64)
+    fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
+        todo!()
     }
+
+    fn serialize_struct_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        len: usize,
+    ) -> Result<Self::SerializeStructVariant> {
+        todo!()
 }
 
-impl From<i64> for NbtTag {
-    fn from(value: i64) -> Self {
-        NbtTag::Long(value)
-    }
-}
-
-impl From<f32> for NbtTag {
-    fn from(value: f32) -> Self {
-        NbtTag::Float(value)
-    }
-}
-
-impl From<f64> for NbtTag {
-    fn from(value: f64) -> Self {
-        NbtTag::Double(value)
-    }
-}
-
-impl From<&str> for NbtTag {
-    fn from(value: &str) -> Self {
-        NbtTag::String(value.to_string())
-    }
-}
-
-impl From<String> for NbtTag {
-    fn from(value: String) -> Self {
-        NbtTag::String(value)
-    }
-}
-
-impl From<Vec<u8>> for NbtTag {
-    fn from(value: Vec<u8>) -> Self {
-        NbtTag::ByteArray(value)
     }
 
 impl<'a, W> ser::SerializeSeq for &'a mut Serializer<W>
