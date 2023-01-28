@@ -18,6 +18,7 @@ impl fmt::Display for Error {
         match self {
             Error::Io(error) => write!(f, "IO error: {}", error),
             Error::Generic(error) => write!(f, "Generic: {}", error),
+            Error::Serde => write!(f, "Serde"),
         }
     }
 }
