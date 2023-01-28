@@ -115,6 +115,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    fn serialize_byte_array(&mut self, v: &[u8]) -> Result<()> {
         self.writer.write_all(&[prefixes::BYTE_ARRAY])?;
         self.writer.write_all(&(v.len() as i32).to_be_bytes())?;
         self.writer.write_all(v)?;
