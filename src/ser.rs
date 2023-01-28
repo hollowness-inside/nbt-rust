@@ -105,7 +105,16 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
-    fn serialize_bytes(&mut self, v: &[u8]) -> Result<()> {
+    fn serialize_compound(&mut self, v: &[(String, NbtTag)]) -> Result<()> {
+        self.writer.write_all(&[prefixes::COMPOUND])?;
+        for (name, tag) in v {
+            self.serialize_str(name)?;
+            self.serialize_tag(tag)?;
+        }
+        self.writer.write_all(&[0])?;
+        Ok(())
+    }
+
         self.writer.write_all(&[prefixes::BYTE_ARRAY])?;
         self.writer.write_all(&(v.len() as i32).to_be_bytes())?;
         self.writer.write_all(v)?;
