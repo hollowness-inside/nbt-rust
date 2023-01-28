@@ -198,7 +198,8 @@ impl<W: io::Write> Serializer<W> {
                 for _i in value {
                     self.serialize_long_array(v)?;
                 }
-            }
+            },
+            _ => {}
         }
 
         Ok(())
