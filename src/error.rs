@@ -25,7 +25,7 @@ impl fmt::Display for Error {
 
 impl error::Error for Error {}
 impl serde::ser::Error for Error {
-    fn custom<T>(msg: T) -> Self
+    fn custom<T>(_msg: T) -> Self
     where
         T: fmt::Display,
     {
