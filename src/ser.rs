@@ -209,15 +209,15 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 }
 
 pub struct ByteArray;
-pub struct LongArray;
-pub struct IntArray;
 pub struct List;
+pub struct IntArray;
 
+pub struct LongArray;
 pub enum SeqType {
     ByteArray,
-    LongArray,
-    IntArray,
     List,
+    IntArray,
+    LongArray,
 }
 
 pub struct SeqSerializer<S, T> {
@@ -231,11 +231,12 @@ impl<S: serde::Serializer, T> SeqSerializer<S, T> {
         SeqSerializer {
             ser: self.ser,
             len: self.len,
+            is_first: true,
             seq_type: match seq_type {
                 SeqType::ByteArray => PhantomData::<ByteArray>,
-                SeqType::LongArray => PhantomData::<LongArray>,
-                SeqType::IntArray => PhantomData::<IntArray>,
                 SeqType::List => PhantomData::<List>,
+                SeqType::IntArray => PhantomData::<IntArray>,
+                SeqType::LongArray => PhantomData::<LongArray>,
             },
         }
     }
