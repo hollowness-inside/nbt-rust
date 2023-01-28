@@ -25,9 +25,9 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = Self;
-    type SerializeTuple = Self;
-    type SerializeTupleStruct = Self;
+    type SerializeSeq = SeqSerializer<Self>;
+    type SerializeTuple = Self::SerializeSeq;
+    type SerializeTupleStruct = Self::SerializeTuple;
     type SerializeTupleVariant = Self;
 
     type SerializeMap = Self;
