@@ -1,6 +1,10 @@
 use std::io;
 
-use crate::{nbt_tag::prefixes, error::Result};
+use crate::{
+    error::{Error, Result},
+    nbt_tag::prefixes,
+    NbtTag,
+};
 
 pub struct Serializer<W> {
     writer: W,
@@ -121,4 +125,83 @@ impl<W: io::Write> Serializer<W> {
         self.writer.write_all(v)?;
         Ok(())
     }
+
+    fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
+        let tag_type = value.first().map(|t| t.tag_type()).unwrap_or(0);
+        if !value.iter().all(|x| x.tag_type() == tag_type) {
+            return Err(Error::Generic(
+                "All elements in a list must have the same type".to_string(),
+            ));
+        }
+
+        self.writer.write_all(&[prefixes::LIST])?;
+        self.writer.write_all(&[tag_type])?;
+        self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
+
+        match value.first() {
+            Some(NbtTag::Byte(v)) => {
+                for _i in value {
+                    self.serialize_u8(*v)?;
+                }
+            }
+            Some(NbtTag::Short(v)) => {
+                for _i in value {
+                    self.serialize_i16(*v)?;
+                }
+            }
+            Some(NbtTag::Int(v)) => {
+                for _i in value {
+                    self.serialize_i32(*v)?;
+                }
+            }
+            Some(NbtTag::Long(v)) => {
+                for _i in value {
+                    self.serialize_i64(*v)?;
+                }
+            }
+            Some(NbtTag::Float(v)) => {
+                for _i in value {
+                    self.serialize_f32(*v)?;
+                }
+            }
+            Some(NbtTag::Double(v)) => {
+                for _i in value {
+                    self.serialize_f64(*v)?;
+                }
+            }
+            Some(NbtTag::ByteArray(v)) => {
+                for _i in value {
+                    self.serialize_byte_array(v)?;
+                }
+            }
+            Some(NbtTag::String(v)) => {
+                for _i in value {
+                    self.serialize_str(v)?;
+                }
+            }
+            Some(NbtTag::List(v)) => {
+                for _i in value {
+                    self.serialize_list(v)?;
+                }
+            }
+            Some(NbtTag::Compound(v)) => {
+                for _i in value {
+                    self.serialize_compound(v)?;
+                }
+            }
+            Some(NbtTag::IntArray(v)) => {
+                for _i in value {
+                    self.serialize_int_array(v)?;
+                }
+            }
+            Some(NbtTag::LongArray(v)) => {
+                for _i in value {
+                    self.serialize_long_array(v)?;
+                }
+            }
+        }
+
+        Ok(())
+    }
+
 }
