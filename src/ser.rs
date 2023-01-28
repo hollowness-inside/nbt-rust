@@ -32,6 +32,12 @@ impl<W: io::Write> Serializer<W> {
             NbtTag::LongArray(v) => self.serialize_long_array(&v),
         }
     }
+
+    fn write_end(&mut self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
+    }
+
     fn serialize_bool(&mut self, v: bool) -> Result<()> {
         self.serialize_u8(if v { 1 } else { 0 })
     }
