@@ -86,7 +86,7 @@ impl Serializer {
     pub fn serialize_str(v: &str) -> Result<Vec<u8>> {
         Ok(vec![
             vec![prefixes::STRING],
-            ((&v).len() as i16).to_be_bytes().to_vec(),
+            (v.len() as i16).to_be_bytes().to_vec(),
             v.as_bytes().to_vec(),
         ]
         .concat())
@@ -107,9 +107,10 @@ impl Serializer {
     pub fn serialize_byte_array(v: &[u8]) -> Result<Vec<u8>> {
         Ok(vec![
             vec![prefixes::BYTE_ARRAY],
-            ((&v).len() as i32).to_be_bytes().to_vec(),
+            (v.len() as i32).to_be_bytes().to_vec(),
             v.to_vec(),
-        ].concat())
+        ]
+        .concat())
     }
 
     pub fn serialize_list(value: &[NbtTag]) -> Result<Vec<u8>> {

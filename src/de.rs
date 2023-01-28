@@ -1,6 +1,10 @@
 use std::io::Read;
 
-use crate::{error::{Result, Error}, nbt_tag::prefixes, NbtTag};
+use crate::{
+    error::{Error, Result},
+    nbt_tag::prefixes,
+    NbtTag,
+};
 
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut bytes = reader.bytes();
@@ -128,7 +132,7 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
             _ => Err(Error::Generic("Unknown tag type".to_string())),
         }
     } else {
-        return Err(crate::error::Error::Generic("Empty stream".to_string()))
+        Err(crate::error::Error::Generic("Empty stream".to_string()))
     }
 }
 
