@@ -20,24 +20,6 @@ impl<W: io::Write> Serializer<W> {
     pub fn into_inner(self) -> W {
         self.writer
     }
-
-    // fn serialize_int_array(&mut self, value: &[i32]) -> Result<()> {
-    //     self.writer.write_all(&[0x0b])?;
-    //     self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-    //     for &int in value {
-    //         self.writer.write_all(&int.to_be_bytes())?;
-    //     }
-    //     Ok(())
-    // }
-
-    // fn serialize_long_array(&mut self, value: &[i64]) -> Result<()> {
-    //     self.writer.write_all(&[0x0c])?;
-    //     self.writer.write_all(&(value.len() as i32).to_be_bytes())?;
-    //     for &long in value {
-    //         self.writer.write_all(&long.to_be_bytes())?;
-    //     }
-    //     Ok(())
-    // }
 }
 
 impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
