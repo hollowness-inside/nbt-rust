@@ -208,6 +208,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 }
 
+pub struct ByteArray;
+pub struct LongArray;
+pub struct IntArray;
+pub struct List;
+
 pub enum SeqType {
     ByteArray,
     LongArray,
