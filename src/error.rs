@@ -3,7 +3,6 @@ use std::{error, fmt, io};
 #[derive(Debug)]
 pub enum Error {
     Io(io::Error),
-    Serde,
     Generic(String),
 }
 
@@ -18,19 +17,10 @@ impl fmt::Display for Error {
         match self {
             Error::Io(error) => write!(f, "IO error: {}", error),
             Error::Generic(error) => write!(f, "Generic: {}", error),
-            Error::Serde => write!(f, "Serde"),
         }
     }
 }
 
 impl error::Error for Error {}
-impl serde::ser::Error for Error {
-    fn custom<T>(_msg: T) -> Self
-    where
-        T: fmt::Display,
-    {
-        Error::Serde
-    }
-}
 
 pub type Result<T> = std::result::Result<T, Error>;
