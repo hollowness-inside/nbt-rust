@@ -270,6 +270,7 @@ where
     }
 }
 
+impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, List> 
 where
     W: io::Write,
 {
@@ -280,11 +281,18 @@ where
     where
         T: ?Sized + ser::Serialize,
     {
-        value.serialize(&mut **self)
+        if self.is_first {
+            self.ser.writer.write_all(&[prefixes::LIST])?;
+            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
+            self.is_first = false;
+        }
+
+        value.serialize(&mut *self.ser);
+        Ok(())
     }
 
     fn end(self) -> Result<()> {
-        self.writer.write_all(&[prefixes::END])?;
+        self.ser.writer.write_all(&[prefixes::END])?;
         Ok(())
     }
 }
