@@ -158,10 +158,8 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
-        if let Some(len) = len {
-            self.writer.write_all(&[prefixes::LIST])?;
-            self.writer.write_all(&(len as i32).to_be_bytes())?;
-            Ok(self)
+        if len.is_some() {
+            Ok(SeqSerializer { ser: self, len, array_type: None })
         } else {
             return Err(Error::Generic(
                 "Cannot serialize a sequence with unknown length".to_string(),
