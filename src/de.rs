@@ -132,3 +132,8 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
         return Err(crate::error::Error::Generic("Empty stream".to_string()))
     }
 }
+
+pub fn from_bytes(bytes: &[u8]) -> Result<NbtTag> {
+    let mut reader = std::io::Cursor::new(bytes);
+    from_reader(&mut reader)
+}
