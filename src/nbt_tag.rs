@@ -14,7 +14,7 @@ pub(crate) mod prefixes {
     pub const LONG_ARRAY: u8 = 0x0c;
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum NbtTag {
     End,
     Byte(u8),
