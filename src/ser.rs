@@ -19,6 +19,11 @@ impl<W: io::Write> Serializer<W> {
         self.writer
     }
 
+    pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
+        self.serialize_tag(&v.into())?;
+        Ok(())
+    }
+
     fn serialize_tag(&mut self, v: &NbtTag) -> Result<()> {
         match v {
             NbtTag::End => self.write_end(),
