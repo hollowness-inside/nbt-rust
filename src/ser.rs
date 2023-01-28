@@ -1,10 +1,11 @@
 use std::{io, marker::PhantomData};
+use std::any::Any;
 
 use serde::{ser, Serialize};
 
 use crate::{
     error::{Error, Result},
-    nbt_tag::{prefixes},
+    nbt_tag::prefixes,
 };
 
 pub struct Serializer<W> {
@@ -25,7 +26,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = SeqSerializer<Self>;
+    type SerializeSeq = SeqSerializer<Self, Unspecified>;
     type SerializeTuple = Self::SerializeSeq;
     type SerializeTupleStruct = Self::SerializeTuple;
     type SerializeTupleVariant = Self;
@@ -159,7 +160,13 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
         if len.is_some() {
-            Ok(SeqSerializer { ser: self, len, array_type: None })
+            Ok(SeqSerializer {
+                ser: self,
+                len,
+                is_first: true,
+                seq_type: PhantomData,
+                
+            })
         } else {
             return Err(Error::Generic(
                 "Cannot serialize a sequence with unknown length".to_string(),
@@ -205,292 +212,5 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         todo!()
-    }
-}
-
-pub struct ByteArray;
-pub struct List;
-pub struct IntArray;
-
-pub struct LongArray;
-pub enum SeqType {
-    ByteArray,
-    List,
-    IntArray,
-    LongArray,
-}
-
-pub struct SeqSerializer<S, T> {
-    ser: S,
-    len: Option<usize>,
-    is_first: bool,
-    seq_type: PhantomData<T>,
-}
-
-impl<S: serde::Serializer, T> SeqSerializer<S, T> {
-    pub fn set_type(self, seq_type: SeqType) -> SeqSerializer<S, T> {
-        SeqSerializer {
-            ser: self.ser,
-            len: self.len,
-            is_first: true,
-            seq_type: match seq_type {
-                SeqType::ByteArray => PhantomData::<ByteArray>,
-                SeqType::List => PhantomData::<List>,
-                SeqType::IntArray => PhantomData::<IntArray>,
-                SeqType::LongArray => PhantomData::<LongArray>,
-            },
-        }
-    }
-}
-
-impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, ByteArray> 
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize + Into<u8>,
-    {
-        if self.is_first {
-            self.ser.writer.write_all(&[prefixes::BYTE_ARRAY])?;
-            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
-            self.is_first = false;
-        }
-
-        let byte: u8 = value.into();
-        self.ser.writer.write_all(&[byte]);
-        Ok(())
-    }
-
-    fn end(self) -> Result<()> {
-        self.ser.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, List> 
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        if self.is_first {
-            self.ser.writer.write_all(&[prefixes::LIST])?;
-            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
-            self.is_first = false;
-        }
-
-        value.serialize(&mut *self.ser);
-        Ok(())
-    }
-
-    fn end(self) -> Result<()> {
-        self.ser.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, IntArray> 
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize + Into<i32>,
-    {
-        if self.is_first {
-            self.ser.writer.write_all(&[prefixes::INT_ARRAY])?;
-            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
-            self.is_first = false;
-        }
-
-        let value: i32 = value.into();
-        value.serialize(&mut *self.ser);
-        Ok(())
-    }
-
-    fn end(self) -> Result<()> {
-        self.ser.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, LongArray> 
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize + Into<i64>,
-    {
-        if self.is_first {
-            self.ser.writer.write_all(&[prefixes::LONG_ARRAY])?;
-            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
-            self.is_first = false;
-        }
-
-        let value: i64 = value.into();
-        value.serialize(&mut *self.ser);
-        Ok(())
-    }
-
-    fn end(self) -> Result<()> {
-        self.ser.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeTuple for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> Result<()> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeTupleStruct for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> Result<()> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeTupleVariant for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> Result<()> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeMap for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_key<T>(&mut self, key: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        key.serialize(&mut **self)
-    }
-
-    fn serialize_value<T>(&mut self, value: &T) -> Result<()>
-    where
-        T: ?Sized + ser::Serialize,
-    {
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> Result<()> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeStruct for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        key: &'static str,
-        value: &T,
-    ) -> std::result::Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        self.writer.write_all(&[prefixes::STRING])?;
-        self.writer.write_all(&(key.len() as i32).to_be_bytes())?;
-        self.writer.write_all(key.as_bytes())?;
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
-    }
-}
-
-impl<'a, W> ser::SerializeStructVariant for &'a mut Serializer<W>
-where
-    W: io::Write,
-{
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        key: &'static str,
-        value: &T,
-    ) -> std::result::Result<(), Self::Error>
-    where
-        T: serde::Serialize,
-    {
-        self.writer.write_all(&[prefixes::STRING])?;
-        self.writer.write_all(&(key.len() as i32).to_be_bytes())?;
-        self.writer.write_all(key.as_bytes())?;
-        value.serialize(&mut **self)
-    }
-
-    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
-        self.writer.write_all(&[prefixes::END])?;
-        Ok(())
     }
 }

@@ -9,7 +9,8 @@ fn main() {
     let mut ser = Serializer::new(&mut writer);
 
     let seq = ser.serialize_seq(Some(3)).unwrap();
-    let seq = seq.set_type(ByteArray);
-    seq.serialize_element(123);
+    let seq = seq.as_long_array();
+    seq.serialize_element(&123);
+    
     seq.end().unwrap();
 }
