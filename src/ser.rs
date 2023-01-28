@@ -33,12 +33,12 @@ impl<W: io::Write> Serializer<W> {
             NbtTag::Long(v) => self.serialize_i64(*v),
             NbtTag::Float(v) => self.serialize_f32(*v),
             NbtTag::Double(v) => self.serialize_f64(*v),
-            NbtTag::ByteArray(v) => self.serialize_byte_array(&v),
-            NbtTag::String(v) => self.serialize_str(&v),
-            NbtTag::List(v) => self.serialize_list(&v),
-            NbtTag::Compound(v) => self.serialize_compound(&v),
-            NbtTag::IntArray(v) => self.serialize_int_array(&v),
-            NbtTag::LongArray(v) => self.serialize_long_array(&v),
+            NbtTag::ByteArray(v) => self.serialize_byte_array(v),
+            NbtTag::String(v) => self.serialize_str(v),
+            NbtTag::List(v) => self.serialize_list(v),
+            NbtTag::Compound(v) => self.serialize_compound(v),
+            NbtTag::IntArray(v) => self.serialize_int_array(v),
+            NbtTag::LongArray(v) => self.serialize_long_array(v),
         }
     }
 
