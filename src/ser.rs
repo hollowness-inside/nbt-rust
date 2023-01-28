@@ -208,7 +208,12 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 }
 
-pub struct SeqSerializer<S> {
+pub enum SeqType {
+    ByteArray,
+    LongArray,
+    IntArray,
+    List,
+}
     ser: S,
     len: Option<usize>,
     array_type: Option<ArrayType>,
