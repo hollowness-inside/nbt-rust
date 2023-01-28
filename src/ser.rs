@@ -252,7 +252,7 @@ where
 
     fn serialize_element<T>(&mut self, value: &T) -> Result<()>
     where
-        T: ?Sized + ser::Serialize,
+        T: ?Sized + ser::Serialize + Into<u8>,
     {
         if self.is_first {
             self.ser.writer.write_all(&[prefixes::BYTE_ARRAY])?;
@@ -260,7 +260,7 @@ where
             self.is_first = false;
         }
 
-        let byte: u8 = value.try_into()?;
+        let byte: u8 = value.into();
         self.ser.writer.write_all(&[byte]);
         Ok(())
     }
@@ -288,6 +288,62 @@ where
             self.is_first = false;
         }
 
+        value.serialize(&mut *self.ser);
+        Ok(())
+    }
+
+    fn end(self) -> Result<()> {
+        self.ser.writer.write_all(&[prefixes::END])?;
+        Ok(())
+    }
+}
+
+impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, IntArray> 
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize + Into<i32>,
+    {
+        if self.is_first {
+            self.ser.writer.write_all(&[prefixes::INT_ARRAY])?;
+            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
+            self.is_first = false;
+        }
+
+        let value: i32 = value.into();
+        value.serialize(&mut *self.ser);
+        Ok(())
+    }
+
+    fn end(self) -> Result<()> {
+        self.ser.writer.write_all(&[prefixes::END])?;
+        Ok(())
+    }
+}
+
+impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, LongArray> 
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize + Into<i64>,
+    {
+        if self.is_first {
+            self.ser.writer.write_all(&[prefixes::LONG_ARRAY])?;
+            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
+            self.is_first = false;
+        }
+
+        let value: i64 = value.into();
         value.serialize(&mut *self.ser);
         Ok(())
     }

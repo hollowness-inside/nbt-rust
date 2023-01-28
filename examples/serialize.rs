@@ -1,8 +1,8 @@
 use std::io;
 
 use rnbt::Serializer;
-use serde::Serializer as _;
 use serde::ser::SerializeSeq;
+use serde::Serializer as _;
 
 fn main() {
     let mut writer = io::stdout();
