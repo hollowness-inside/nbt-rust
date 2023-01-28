@@ -203,15 +203,23 @@ impl From<&[i32]> for NbtTag {
     }
 }
 
-impl From<Vec<i64>> for NbtTag {
-    fn from(value: Vec<i64>) -> Self {
-        NbtTag::LongArray(value)
-    }
+impl<'a, W> ser::SerializeTupleStruct for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        value.serialize(&mut **self)
 }
 
-impl From<&[i64]> for NbtTag {
-    fn from(value: &[i64]) -> Self {
-        NbtTag::LongArray(value.to_vec())
+    fn end(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
     }
 }
 
