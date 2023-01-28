@@ -227,14 +227,29 @@ impl From<&[NbtTag]> for NbtTag {
     }
 }
 
-impl From<Vec<(String, NbtTag)>> for NbtTag {
-    fn from(value: Vec<(String, NbtTag)>) -> Self {
-        NbtTag::Compound(value)
+impl<'a, W> ser::SerializeMap for &'a mut Serializer<W>
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_key<T>(&mut self, key: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        key.serialize(&mut **self)
     }
+
+    fn serialize_value<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        value.serialize(&mut **self)
 }
 
-impl From<&[(String, NbtTag)]> for NbtTag {
-    fn from(value: &[(String, NbtTag)]) -> Self {
-        NbtTag::Compound(value.to_vec())
+    fn end(self) -> Result<()> {
+        self.writer.write_all(&[prefixes::END])?;
+        Ok(())
     }
 }
