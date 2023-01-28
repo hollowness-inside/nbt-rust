@@ -241,6 +241,35 @@ impl<S: serde::Serializer, T> SeqSerializer<S, T> {
         }
     }
 }
+
+impl<'a, W> ser::SerializeSeq for SeqSerializer<&'a mut Serializer<W>, ByteArray> 
+where
+    W: io::Write,
+{
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T>(&mut self, value: &T) -> Result<()>
+    where
+        T: ?Sized + ser::Serialize,
+    {
+        if self.is_first {
+            self.ser.writer.write_all(&[prefixes::BYTE_ARRAY])?;
+            self.ser.writer.write_all(&(self.len.unwrap() as i32).to_be_bytes())?;
+            self.is_first = false;
+        }
+
+        let byte: u8 = value.try_into()?;
+        self.ser.writer.write_all(&[byte]);
+        Ok(())
+    }
+
+    fn end(self) -> Result<()> {
+        self.ser.writer.write_all(&[prefixes::END])?;
+        Ok(())
+    }
+}
+
 where
     W: io::Write,
 {
