@@ -4,8 +4,7 @@ use serde::ser;
 
 use crate::{
     error::{Error, Result},
-    nbt_tag::{self, prefixes},
-    NbtTag,
+    nbt_tag::{prefixes},
 };
 
 pub struct Serializer<W> {
@@ -33,7 +32,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 
     type SerializeMap = Self;
     type SerializeStruct = Self;
-    type SerializeStructVarian = Self;
     type SerializeStructVariant = Self;
 
     fn serialize_bool(self, v: bool) -> Result<()> {
@@ -126,20 +124,20 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         todo!()
     }
 
-    fn serialize_unit_struct(self, name: &'static str) -> Result<()> {
+    fn serialize_unit_struct(self, _name: &'static str) -> Result<()> {
         todo!()
     }
 
     fn serialize_unit_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
     ) -> Result<()> {
         todo!()
     }
 
-    fn serialize_newtype_struct<T: ?Sized>(self, name: &'static str, value: &T) -> Result<()>
+    fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -148,10 +146,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
 
     fn serialize_newtype_variant<T: ?Sized>(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        value: &T,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _value: &T,
     ) -> Result<()>
     where
         T: serde::Serialize,
@@ -171,42 +169,42 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         }
     }
 
-    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
+    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
         todo!()
     }
 
     fn serialize_tuple_struct(
         self,
-        name: &'static str,
-        len: usize,
+        _name: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
         todo!()
     }
 
     fn serialize_tuple_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
         todo!()
     }
 
-    fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
+    fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
         todo!()
     }
 
-    fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
+    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
         todo!()
     }
 
     fn serialize_struct_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         todo!()
     }
@@ -332,7 +330,8 @@ where
         value: &T,
     ) -> std::result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         self.writer.write_all(&[prefixes::STRING])?;
         self.writer.write_all(&(key.len() as i32).to_be_bytes())?;
         self.writer.write_all(key.as_bytes())?;
@@ -358,7 +357,8 @@ where
         value: &T,
     ) -> std::result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         self.writer.write_all(&[prefixes::STRING])?;
         self.writer.write_all(&(key.len() as i32).to_be_bytes())?;
         self.writer.write_all(key.as_bytes())?;
@@ -368,6 +368,5 @@ where
     fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
         self.writer.write_all(&[prefixes::END])?;
         Ok(())
-    
     }
 }
