@@ -234,7 +234,7 @@ impl CompoundSerializer {
             self.is_first = false;
         }
 
-        self.output.extend(Serializer::serialize_str(&key)?);
+        self.output.extend(Serializer::serialize_str(key)?);
         self.output.extend(Serializer::serialize(value)?);
         Ok(())
     }
