@@ -75,7 +75,6 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
                 let mut tags = Vec::new();
 
                 loop {
-                    // println!("{:?}", from_reader(reader)?);
                     let key = match from_reader(reader)? {
                         NbtTag::String(name) => name,
                         NbtTag::End => break,
