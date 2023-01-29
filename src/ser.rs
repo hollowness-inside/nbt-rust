@@ -9,8 +9,8 @@ use crate::{
 pub struct Serializer;
 
 impl Serializer {
-    pub fn serialize<T: Into<NbtTag>>(v: T) -> Result<Vec<u8>> {
-        Self::serialize_tag(&v.into())
+    pub fn serialize<T: Into<NbtTag> + Clone>(v: &T) -> Result<Vec<u8>> {
+        Self::serialize_tag(&v.clone().into())
     }
 
     pub fn serialize_tag(v: &NbtTag) -> Result<Vec<u8>> {
@@ -212,5 +212,35 @@ impl Serializer {
             writer.write_all(&i.to_be_bytes())?;
         }
         Ok(writer.into_inner())
+    }
+
+    pub fn start_compound() -> CompoundSerializer {
+        CompoundSerializer {
+            is_first: true,
+            output: Vec::new(),
+        }
+    }
+}
+
+pub struct CompoundSerializer {
+    is_first: bool,
+    output: Vec<u8>,
+}
+
+impl CompoundSerializer {
+    pub fn write_field<T: Into<NbtTag> + Clone>(&mut self, key: &str, value: &T) -> Result<()> {
+        if self.is_first {
+            self.output.push(prefixes::COMPOUND);
+            self.is_first = false;
+        }
+
+        self.output.extend(Serializer::serialize_str(&key)?);
+        self.output.extend(Serializer::serialize(value)?);
+        Ok(())
+    }
+
+    pub fn end(mut self) -> Vec<u8> {
+        self.output.push(prefixes::END);
+        self.output
     }
 }
