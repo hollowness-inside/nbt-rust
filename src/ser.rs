@@ -92,11 +92,11 @@ impl Serializer {
         .concat())
     }
 
-    pub fn serialize_compound(v: &[(String, NbtTag)]) -> Result<Vec<u8>> {
+    pub fn serialize_compound<S: ToString>(v: &[(S, NbtTag)]) -> Result<Vec<u8>> {
         let mut writer = Cursor::new(Vec::new());
         writer.write_all(&[prefixes::COMPOUND])?;
         for (name, tag) in v {
-            writer.write_all(&Self::serialize_str(name)?)?;
+            writer.write_all(&Self::serialize_str(&name.to_string())?)?;
             writer.write_all(&Self::serialize_tag(tag)?)?;
         }
         writer.write_all(&[prefixes::END])?;
