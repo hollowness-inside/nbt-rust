@@ -73,16 +73,17 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
             }
             prefixes::COMPOUND => {
                 let mut tags = Vec::new();
+
                 loop {
-                    let tag = from_reader(reader)?;
-                    if let NbtTag::End = tag {
-                        break;
-                    }
-                    let name = match from_reader(reader)? {
+                    // println!("{:?}", from_reader(reader)?);
+                    let key = match from_reader(reader)? {
                         NbtTag::String(name) => name,
+                        NbtTag::End => break,
                         _ => return Err(Error::Generic("Expected string".to_string())),
                     };
-                    tags.push((name, tag));
+
+                    let value = from_reader(reader)?;
+                    tags.push((key, value));
                 }
                 Ok(NbtTag::Compound(tags))
             }
