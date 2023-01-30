@@ -57,9 +57,21 @@ impl From<u8> for NbtTag {
     }
 }
 
+impl From<i8> for NbtTag {
+    fn from(v: i8) -> Self {
+        NbtTag::Byte(v as u8)
+    }
+}
+
 impl From<i16> for NbtTag {
     fn from(v: i16) -> Self {
         NbtTag::Short(v)
+    }
+}
+
+impl From<u16> for NbtTag {
+    fn from(v: u16) -> Self {
+        NbtTag::Short(v as i16)
     }
 }
 
@@ -69,9 +81,21 @@ impl From<i32> for NbtTag {
     }
 }
 
+impl From<u32> for NbtTag {
+    fn from(v: u32) -> Self {
+        NbtTag::Int(v as i32)
+    }
+}
+
 impl From<i64> for NbtTag {
     fn from(v: i64) -> Self {
         NbtTag::Long(v)
+    }
+}
+
+impl From<u64> for NbtTag {
+    fn from(v: u64) -> Self {
+        NbtTag::Long(v as i64)
     }
 }
 
