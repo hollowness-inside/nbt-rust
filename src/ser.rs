@@ -9,18 +9,22 @@ use crate::{
 pub struct Serializer<W>(W);
 
 impl<W: io::Write> Serializer<W> {
+    /// Creates a new serializer that writes to the given writer
     pub fn new(writer: W) -> Self {
         Self(writer)
     }
 
+    /// Consumes the serializer and returns the underlying writer
     pub fn into_inner(self) -> W {
         self.0
     }
 
+    /// Serializes a value into NBT
     pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
         self.serialize_tag(&v.into())
     }
 
+    /// Serializes a tag into NBT
     pub fn serialize_tag(&mut self, v: &NbtTag) -> Result<()> {
         match v {
             NbtTag::End => self.serialize_end(),
@@ -39,24 +43,29 @@ impl<W: io::Write> Serializer<W> {
         }
     }
 
+    /// Writes the end tag to the underlying writer
     pub fn serialize_end(&mut self) -> Result<()> {
         self.0.write_all(&[prefixes::END])?;
         Ok(())
     }
 
+    /// Serializes a boolean into NBT
     pub fn serialize_bool(&mut self, v: bool) -> Result<()> {
         self.serialize_u8(if v { 1 } else { 0 })
     }
 
+    /// Serializes a byte into NBT
     pub fn serialize_u8(&mut self, v: u8) -> Result<()> {
         self.0.write_all(&[prefixes::BYTE, v])?;
         Ok(())
     }
 
+    /// Serializes a signed byte into NBT
     pub fn serialize_i8(&mut self, v: i8) -> Result<()> {
         self.serialize_u8(v as u8)
     }
 
+    /// Serializes a short into NBT
     pub fn serialize_u16(&mut self, v: u16) -> Result<()> {
         let mut res = vec![prefixes::SHORT];
         res.extend(v.to_be_bytes());
@@ -64,10 +73,12 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a signed short into NBT
     pub fn serialize_i16(&mut self, v: i16) -> Result<()> {
         self.serialize_u16(v as u16)
     }
 
+    /// Serializes an integer into NBT
     pub fn serialize_u32(&mut self, v: u32) -> Result<()> {
         let mut res = vec![prefixes::INT];
         res.extend(v.to_be_bytes());
@@ -76,10 +87,12 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a signed integer into NBT
     pub fn serialize_i32(&mut self, v: i32) -> Result<()> {
         self.serialize_u32(v as u32)
     }
 
+    /// Serializes a long into NBT
     pub fn serialize_u64(&mut self, v: u64) -> Result<()> {
         let mut res = vec![prefixes::LONG];
         res.extend(v.to_be_bytes());
@@ -88,10 +101,12 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a signed long into NBT
     pub fn serialize_i64(&mut self, v: i64) -> Result<()> {
         self.serialize_u64(v as u64)
     }
 
+    /// Serializes a float into NBT
     pub fn serialize_f32(&mut self, v: f32) -> Result<()> {
         let mut res = vec![prefixes::FLOAT];
         res.extend(v.to_be_bytes());
@@ -100,6 +115,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a double into NBT
     pub fn serialize_f64(&mut self, v: f64) -> Result<()> {
         let mut res = vec![prefixes::DOUBLE];
         res.extend(v.to_be_bytes());
@@ -108,10 +124,12 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a char into NBT
     pub fn serialize_char(&mut self, v: char) -> Result<()> {
         self.serialize_u8(v as u8)
     }
 
+    /// Serializes a string into NBT
     pub fn serialize_str(&mut self, v: &str) -> Result<()> {
         let mut res = vec![prefixes::STRING];
         res.extend((v.len() as i16).to_be_bytes());
@@ -121,6 +139,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a vector of key-value pairs into NBT
     pub fn serialize_compound<S: ToString>(&mut self, v: &[(S, NbtTag)]) -> Result<()> {
         self.0.write_all(&[prefixes::COMPOUND])?;
 
@@ -133,6 +152,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a byte slice into NBT
     pub fn serialize_byte_array(&mut self, v: &[u8]) -> Result<()> {
         let mut res = vec![prefixes::BYTE_ARRAY];
         res.extend((v.len() as i32).to_be_bytes());
@@ -142,6 +162,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a slice of NBT tags into NBT
     pub fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
         let Some(tag_type) = value.first().map(|t| t.tag_type()) else {
             return Err(Error::Generic("Cannot serialize an empty list".to_string()));
@@ -225,6 +246,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a slice of integers into NBT
     pub fn serialize_int_array(&mut self, v: &[i32]) -> Result<()> {
         let mut res = vec![prefixes::INT_ARRAY];
         res.extend((v.len() as i32).to_be_bytes());
@@ -236,6 +258,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Serializes a slice of longs into NBT
     pub fn serialize_long_array(&mut self, v: &[i64]) -> Result<()> {
         let mut res = vec![prefixes::LONG_ARRAY];
         res.extend((v.len() as i32).to_be_bytes());
@@ -247,6 +270,8 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
+    /// Consumes the serializer and returns a CompoundSerializer
+    /// which can be used to serialize a compound tag
     pub fn start_compound(self) -> CompoundSerializer<W> {
         CompoundSerializer {
             ser: self,
@@ -255,12 +280,14 @@ impl<W: io::Write> Serializer<W> {
     }
 }
 
+/// A serializer for compound tags
 pub struct CompoundSerializer<W> {
     ser: Serializer<W>,
     is_first: bool,
 }
 
 impl<W: io::Write> CompoundSerializer<W> {
+    /// Serializes a key-value pair into NBT
     pub fn write_field<T: Into<NbtTag>>(&mut self, key: &str, value: T) -> Result<()> {
         if self.is_first {
             self.ser.0.write_all(&[prefixes::COMPOUND])?;
@@ -273,6 +300,7 @@ impl<W: io::Write> CompoundSerializer<W> {
         Ok(())
     }
 
+    /// Consumes the compound serializer and returns the underlying Serializer
     pub fn end(mut self) -> Result<Serializer<W>> {
         self.ser.serialize_end()?;
         Ok(self.ser)

@@ -6,10 +6,11 @@ use crate::{
     NbtTag,
 };
 
+/// Reads a single NBT tag from a reader
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut bytes = reader.bytes();
-    if let Some(byte) = bytes.next() {
-        match byte? {
+    if let Some(Ok(byte)) = bytes.next() {
+        match byte {
             prefixes::BYTE => {
                 let mut buf = [0; 1];
                 reader.read_exact(&mut buf)?;
@@ -136,6 +137,7 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
     }
 }
 
+/// Reads a single NBT tag from a byte slice
 pub fn from_bytes(bytes: &[u8]) -> Result<NbtTag> {
     let mut reader = std::io::Cursor::new(bytes);
     from_reader(&mut reader)

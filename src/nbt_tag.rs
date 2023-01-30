@@ -1,3 +1,6 @@
+/// NBT Tag
+
+/// Prefixes for each tag type
 pub(crate) mod prefixes {
     pub const END: u8 = 0x00;
     pub const BYTE: u8 = 0x01;
