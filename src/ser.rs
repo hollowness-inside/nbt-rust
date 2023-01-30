@@ -245,7 +245,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
-    pub fn start_compound(mut self) -> CompoundSerializer<W> {
+    pub fn start_compound(self) -> CompoundSerializer<W> {
         CompoundSerializer {
             ser: self,
             is_first: true,
