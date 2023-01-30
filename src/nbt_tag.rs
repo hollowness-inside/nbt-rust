@@ -51,110 +51,80 @@ impl NbtTag {
     }
 }
 
-impl From<u32> for NbtTag {
-    fn from(value: u32) -> Self {
-        NbtTag::Int(value as i32)
+impl From<u8> for NbtTag {
+    fn from(v: u8) -> Self {
+        NbtTag::Byte(v)
+    }
+}
+
+impl From<i16> for NbtTag {
+    fn from(v: i16) -> Self {
+        NbtTag::Short(v)
     }
 }
 
 impl From<i32> for NbtTag {
-    fn from(value: i32) -> Self {
-        NbtTag::Int(value)
-    }
-}
-
-impl From<u64> for NbtTag {
-    fn from(value: u64) -> Self {
-        NbtTag::Long(value as i64)
+    fn from(v: i32) -> Self {
+        NbtTag::Int(v)
     }
 }
 
 impl From<i64> for NbtTag {
-    fn from(value: i64) -> Self {
-        NbtTag::Long(value)
+    fn from(v: i64) -> Self {
+        NbtTag::Long(v)
     }
 }
 
 impl From<f32> for NbtTag {
-    fn from(value: f32) -> Self {
-        NbtTag::Float(value)
+    fn from(v: f32) -> Self {
+        NbtTag::Float(v)
     }
 }
 
 impl From<f64> for NbtTag {
-    fn from(value: f64) -> Self {
-        NbtTag::Double(value)
-    }
-}
-
-impl From<&str> for NbtTag {
-    fn from(value: &str) -> Self {
-        NbtTag::String(value.to_string())
-    }
-}
-
-impl From<String> for NbtTag {
-    fn from(value: String) -> Self {
-        NbtTag::String(value)
+    fn from(v: f64) -> Self {
+        NbtTag::Double(v)
     }
 }
 
 impl From<Vec<u8>> for NbtTag {
-    fn from(value: Vec<u8>) -> Self {
-        NbtTag::ByteArray(value)
+    fn from(v: Vec<u8>) -> Self {
+        NbtTag::ByteArray(v)
     }
 }
 
-impl From<&[u8]> for NbtTag {
-    fn from(value: &[u8]) -> Self {
-        NbtTag::ByteArray(value.to_vec())
-    }
-}
-
-impl From<Vec<i32>> for NbtTag {
-    fn from(value: Vec<i32>) -> Self {
-        NbtTag::IntArray(value)
-    }
-}
-
-impl From<&[i32]> for NbtTag {
-    fn from(value: &[i32]) -> Self {
-        NbtTag::IntArray(value.to_vec())
-    }
-}
-
-impl From<Vec<i64>> for NbtTag {
-    fn from(value: Vec<i64>) -> Self {
-        NbtTag::LongArray(value)
-    }
-}
-
-impl From<&[i64]> for NbtTag {
-    fn from(value: &[i64]) -> Self {
-        NbtTag::LongArray(value.to_vec())
+impl From<String> for NbtTag {
+    fn from(v: String) -> Self {
+        NbtTag::String(v)
     }
 }
 
 impl From<Vec<NbtTag>> for NbtTag {
-    fn from(value: Vec<NbtTag>) -> Self {
-        NbtTag::List(value)
-    }
-}
-
-impl From<&[NbtTag]> for NbtTag {
-    fn from(value: &[NbtTag]) -> Self {
-        NbtTag::List(value.to_vec())
+    fn from(v: Vec<NbtTag>) -> Self {
+        NbtTag::List(v)
     }
 }
 
 impl From<Vec<(String, NbtTag)>> for NbtTag {
-    fn from(value: Vec<(String, NbtTag)>) -> Self {
-        NbtTag::Compound(value)
+    fn from(v: Vec<(String, NbtTag)>) -> Self {
+        NbtTag::Compound(v)
     }
 }
 
-impl From<&[(String, NbtTag)]> for NbtTag {
-    fn from(value: &[(String, NbtTag)]) -> Self {
-        NbtTag::Compound(value.to_vec())
+impl From<Vec<i32>> for NbtTag {
+    fn from(v: Vec<i32>) -> Self {
+        NbtTag::IntArray(v)
+    }
+}
+
+impl From<Vec<i64>> for NbtTag {
+    fn from(v: Vec<i64>) -> Self {
+        NbtTag::LongArray(v)
+    }
+}
+
+impl From<()> for NbtTag {
+    fn from(_: ()) -> Self {
+        NbtTag::End
     }
 }
