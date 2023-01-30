@@ -137,7 +137,7 @@ impl<W: io::Write> Serializer<W> {
 
     pub fn serialize_byte_array(&mut self, v: &[u8]) -> Result<()> {
         let mut res = vec![prefixes::BYTE_ARRAY];
-        res.extend((v.len() as u16).to_be_bytes());
+        res.extend((v.len() as i32).to_be_bytes());
         res.extend(v);
         self.0.write_all(&res);
 
