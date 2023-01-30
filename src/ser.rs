@@ -40,29 +40,27 @@ impl<W: io::Write> Serializer<W> {
     }
 
     pub fn serialize_end(&mut self) -> Result<()> {
-        self.0.write_all(&[prefixes::END]);
+        self.0.write_all(&[prefixes::END])?;
         Ok(())
     }
 
     pub fn serialize_bool(&mut self, v: bool) -> Result<()> {
-        self.serialize_u8(if v { 1 } else { 0 });
-        Ok(())
+        self.serialize_u8(if v { 1 } else { 0 })
     }
 
     pub fn serialize_u8(&mut self, v: u8) -> Result<()> {
-        self.0.write_all(&[prefixes::BYTE, v]);
+        self.0.write_all(&[prefixes::BYTE, v])?;
         Ok(())
     }
 
     pub fn serialize_i8(&mut self, v: i8) -> Result<()> {
-        self.serialize_u8(v as u8);
-        Ok(())
+        self.serialize_u8(v as u8)
     }
 
     pub fn serialize_u16(&mut self, v: u16) -> Result<()> {
         let mut res = vec![prefixes::SHORT];
         res.extend(v.to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
         Ok(())
     }
 
@@ -73,7 +71,7 @@ impl<W: io::Write> Serializer<W> {
     pub fn serialize_u32(&mut self, v: u32) -> Result<()> {
         let mut res = vec![prefixes::INT];
         res.extend(v.to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -85,7 +83,7 @@ impl<W: io::Write> Serializer<W> {
     pub fn serialize_u64(&mut self, v: u64) -> Result<()> {
         let mut res = vec![prefixes::LONG];
         res.extend(v.to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -97,7 +95,7 @@ impl<W: io::Write> Serializer<W> {
     pub fn serialize_f32(&mut self, v: f32) -> Result<()> {
         let mut res = vec![prefixes::FLOAT];
         res.extend(v.to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -105,7 +103,7 @@ impl<W: io::Write> Serializer<W> {
     pub fn serialize_f64(&mut self, v: f64) -> Result<()> {
         let mut res = vec![prefixes::DOUBLE];
         res.extend(v.to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -118,7 +116,7 @@ impl<W: io::Write> Serializer<W> {
         let mut res = vec![prefixes::STRING];
         res.extend((v.len() as i16).to_be_bytes());
         res.extend(v.as_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -139,7 +137,7 @@ impl<W: io::Write> Serializer<W> {
         let mut res = vec![prefixes::BYTE_ARRAY];
         res.extend((v.len() as i32).to_be_bytes());
         res.extend(v);
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -158,7 +156,7 @@ impl<W: io::Write> Serializer<W> {
         let mut res = vec![prefixes::LIST];
         res.push(tag_type);
         res.extend((value.len() as i32).to_be_bytes());
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         match value.first() {
             Some(NbtTag::Byte(v)) => {
@@ -233,7 +231,7 @@ impl<W: io::Write> Serializer<W> {
         for i in v {
             res.extend(i.to_be_bytes());
         }
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
@@ -244,7 +242,7 @@ impl<W: io::Write> Serializer<W> {
         for i in v {
             res.extend(i.to_be_bytes());
         }
-        self.0.write_all(&res);
+        self.0.write_all(&res)?;
 
         Ok(())
     }
