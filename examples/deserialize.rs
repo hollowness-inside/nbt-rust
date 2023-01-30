@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use rnbt::{de::from_bytes, error::Result, Serializer};
+use nbt_rust::{de::from_bytes, error::Result, ser::Serializer};
 
 fn main() -> Result<()> {
     // Some binary NBT data to deserialize
