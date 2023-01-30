@@ -16,10 +16,11 @@ This library allows you to write a single `u8`, or `String`, or any other suppor
 use nbt_rust::ser::Serializer;
 
 let writer = /* impl std::io::Write */;
-let ser = Serializer::new(writer);
-ser.serialize(123u8)?; // or ser.serialize_u8(123)
-ser.serialize(123i16)?; // or ser.serialize_i8(123)
-ser.serialize("Das ist cool")?; // or ser.serialize_str("Das ist cool")
+let mut ser = Serializer::new(writer);
+ser.serialize(1)?; // or ser.serialize_int(1)
+ser.serialize(12u8)?; // or ser.serialize_byte(12)
+ser.serialize(123i16)?; // or ser.serialize_short(123)
+ser.serialize("Das ist cool")?; // or ser.serialize_string("Das ist cool")
 ```
 
 Note: In this example, different data types are serialized consecutively but not within a List or an NBT array, so the Deserializer will only read the first value.
@@ -30,7 +31,7 @@ Minecraft typically uses Compound tags in its files, so consider using `start_co
 use nbt_rust::ser::Serializer;
 
 let writer = /* impl std::io::Write */;
-let compound_ser = Serializer::new(writer).start_compound();
+let mut compound_ser = Serializer::new(writer).start_compound();
 
 // Write fields to the Compound tag
 compound_ser.write_field("item_1", 213u32)?;
