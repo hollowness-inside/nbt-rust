@@ -275,8 +275,8 @@ impl<W: io::Write> CompoundSerializer<W> {
         Ok(())
     }
 
-    pub fn end(mut self) -> Result<()> {
+    pub fn end(mut self) -> Result<Serializer<W>> {
         self.ser.serialize_end()?;
-        Ok(())
+        Ok(self.ser)
     }
 }
