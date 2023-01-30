@@ -9,6 +9,10 @@ use crate::{
 pub struct Serializer<W>(W);
 
 impl<W: io::Write> Serializer<W> {
+    pub fn new(writer: W) -> Self {
+        Self(writer)
+    }
+
     pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
         self.serialize_tag(&v.into())
     }
