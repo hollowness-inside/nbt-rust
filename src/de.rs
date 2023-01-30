@@ -130,10 +130,10 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<NbtTag> {
                 Ok(NbtTag::LongArray(longs))
             }
             prefixes::END => Ok(NbtTag::End),
-            _ => Err(Error::Generic("Unknown tag type".to_string())),
+            _ => Err(Error::UnknownTagType(byte)),
         }
     } else {
-        Err(crate::error::Error::Generic("Empty stream".to_string()))
+        Err(Error::Generic("Empty stream".to_string()))
     }
 }
 

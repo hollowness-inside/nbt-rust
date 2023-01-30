@@ -4,6 +4,9 @@ use std::{error, fmt, io};
 pub enum Error {
     Io(io::Error),
     Utf8(std::string::FromUtf8Error),
+    UnknownTagType(u8),
+    EmptySequence,
+    ElementTypesDiffer,
     Generic(String),
 }
 
@@ -24,6 +27,9 @@ impl fmt::Display for Error {
         match self {
             Error::Io(error) => write!(f, "IO error: {error}"),
             Error::Utf8(error) => write!(f, "UTF-8 error: {error}"),
+            Error::UnknownTagType(byte) => write!(f, "Unknown tag type: {byte}"),
+            Error::EmptySequence => write!(f, "Empty sequence"),
+            Error::ElementTypesDiffer => write!(f, "Element types differ"),
             Error::Generic(error) => write!(f, "Generic: {error}"),
         }
     }

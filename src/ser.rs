@@ -122,13 +122,11 @@ impl<W: io::Write> Serializer<W> {
     /// Serializes a slice of NBT tags into NBT
     pub fn serialize_list(&mut self, value: &[NbtTag]) -> Result<()> {
         let Some(tag_type) = value.first().map(|t| t.tag_type()) else {
-            return Err(Error::Generic("Cannot serialize an empty list".to_string()));
+            return Err(Error::EmptySequence);
         };
 
         if !value.iter().all(|x| x.tag_type() == tag_type) {
-            return Err(Error::Generic(
-                "All elements in a list must have the same type".to_string(),
-            ));
+            return Err(Error::ElementTypesDiffer);
         }
 
         let mut res = vec![prefixes::LIST];
@@ -222,10 +220,7 @@ impl<W: io::Write> Serializer<W> {
                 }
             }
             _ => {
-                return Err(Error::Generic(format!(
-                    "Unknown tag type: {}",
-                    tag_type
-                )));
+                return Err(Error::UnknownTagType(tag_type));
             }
         }
 
