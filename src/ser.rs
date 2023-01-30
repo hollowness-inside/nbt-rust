@@ -13,6 +13,10 @@ impl<W: io::Write> Serializer<W> {
         Self(writer)
     }
 
+    pub fn into_inner(self) -> W {
+        self.0
+    }
+
     pub fn serialize<T: Into<NbtTag>>(&mut self, v: T) -> Result<()> {
         self.serialize_tag(&v.into())
     }
