@@ -18,7 +18,12 @@ fn main() -> Result<()> {
     comp.write_field("item_3", vec![1i32, 2, 3, 4, 5])?;
 
     // Ends the compound tag and returns the serializer.
-    let ser = comp.end()?;
+    let mut ser = comp.end()?;
+
+    // Usually there's no need to write anything else after a compound tag.
+    // However, if you want to write more tags, you can do so
+    ser.serialize_byte(82)?;
+    ser.serialize_short(28)?;
 
     // Prints the value of the owned writer.
     // into_inner is called twice because the Vec is wrapped in a Cursor.
