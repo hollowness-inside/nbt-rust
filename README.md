@@ -4,9 +4,12 @@ A Rust library for serializing and deserializing the NBT (Named Binary Tag) file
 [NBT format documentation](https://minecraft.fandom.com/wiki/NBT_format)
 
 # Serialization
-Check out the [examples](https://github.com/hollowness-inside/nbt-rust/tree/main/examples)
+Check out the [examples](https://github.com/hollowness-inside/nbt-rust/tree/main/examples) or simply run
+- `cargo run --example serialize`
+- `cargo run --example deserialize`
 
-This library allows you to write a single u8, or String, or any other supported type.
+
+This library allows you to write a single `u8`, or `String`, or any other supported type.
 
 
 ```rust
