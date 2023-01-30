@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use rnbt::{error::Result, Serializer};
+use nbt_rust::{error::Result, ser::Serializer};
 
 fn main() -> Result<()> {
     let writer = Cursor::new(Vec::new());
