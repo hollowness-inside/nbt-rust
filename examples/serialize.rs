@@ -22,8 +22,8 @@ fn main() -> Result<()> {
 
     // Usually there's no need to write anything else after a compound tag.
     // However, if you want to write more tags, you can do so
-    ser.serialize_byte(82)?;
-    ser.serialize_short(28)?;
+    ser.serialize_byte("my_byte", 82)?;
+    ser.serialize_short("your_short", 28)?;
 
     // Prints the value of the owned writer.
     // into_inner is called twice because the Vec is wrapped in a Cursor.
