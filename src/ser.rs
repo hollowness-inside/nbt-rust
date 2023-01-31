@@ -125,6 +125,7 @@ impl<W: io::Write> Serializer<W> {
     /// Consumes the serializer and returns a CompoundSerializer
     /// which can be used to serialize a compound tag
     pub fn start_compound(mut self, name: &str) -> Result<CompoundSerializer<W>> {
+        self.write_header(prefixes::COMPOUND, name)?;
     }
 
     #[inline]
