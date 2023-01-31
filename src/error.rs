@@ -7,7 +7,6 @@ pub enum Error {
     UnknownTagType(u8),
     EmptySequence,
     ElementTypesDiffer,
-    Generic(String),
 }
 
 impl From<io::Error> for Error {
@@ -30,7 +29,6 @@ impl fmt::Display for Error {
             Error::UnknownTagType(byte) => write!(f, "Unknown tag type: {byte}"),
             Error::EmptySequence => write!(f, "Empty sequence"),
             Error::ElementTypesDiffer => write!(f, "Element types differ"),
-            Error::Generic(error) => write!(f, "Generic: {error}"),
         }
     }
 }
