@@ -10,7 +10,7 @@ fn main() -> Result<()> {
     let ser = Serializer::new(writer);
 
     // Starts a new compound tag.
-    let mut comp = ser.start_compound();
+    let mut comp = ser.start_compound("my_compound")?;
 
     // Writes fields to the compound tag.
     comp.write_field("item_1", 123u8)?;
