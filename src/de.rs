@@ -54,6 +54,7 @@ fn read_tag_header<R: Read>(reader: &mut R) -> Result<(u8, String)> {
     Ok((prefix, name))
 }
 
+#[inline]
 fn read_headless_byte<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut byte = [0; 1];
     reader.read_exact(&mut byte)?;
@@ -61,6 +62,7 @@ fn read_headless_byte<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Byte(byte[0]))
 }
 
+#[inline]
 fn read_headless_short<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut short = [0; 2];
     reader.read_exact(&mut short)?;
@@ -68,6 +70,7 @@ fn read_headless_short<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Short(i16::from_be_bytes(short)))
 }
 
+#[inline]
 fn read_headless_int<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut int = [0; 4];
     reader.read_exact(&mut int)?;
@@ -75,6 +78,7 @@ fn read_headless_int<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Int(i32::from_be_bytes(int)))
 }
 
+#[inline]
 fn read_headless_long<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut long = [0; 8];
     reader.read_exact(&mut long)?;
@@ -82,6 +86,7 @@ fn read_headless_long<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Long(i64::from_be_bytes(long)))
 }
 
+#[inline]
 fn read_headless_float<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut float = [0; 4];
     reader.read_exact(&mut float)?;
@@ -89,6 +94,7 @@ fn read_headless_float<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Float(f32::from_be_bytes(float)))
 }
 
+#[inline]
 fn read_headless_double<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut double = [0; 8];
     reader.read_exact(&mut double)?;
@@ -96,6 +102,7 @@ fn read_headless_double<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::Double(f64::from_be_bytes(double)))
 }
 
+#[inline]
 fn read_headless_byte_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut len = [0; 4];
     reader.read_exact(&mut len)?;
