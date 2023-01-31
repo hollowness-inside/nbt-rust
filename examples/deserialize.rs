@@ -7,10 +7,11 @@ fn main() -> Result<()> {
     let data = data()?;
 
     // Deserializes the data
-    let deserialized = from_bytes(&data)?;
+    let (name, deserialized) = from_bytes(&data)?;
 
     // Prints the parsed NBT data
-    println!("{deserialized:#?}");
+    println!("Name: {name}");
+    println!("Value: {deserialized}");
 
     Ok(())
 }

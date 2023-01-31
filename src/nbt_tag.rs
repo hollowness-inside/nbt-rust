@@ -1,3 +1,5 @@
+use std::fmt::{self, Formatter, Error};
+
 /// NBT Tag
 
 /// Prefixes for each tag type
@@ -50,6 +52,35 @@ impl NbtTag {
             NbtTag::Compound(_) => prefixes::COMPOUND,
             NbtTag::IntArray(_) => prefixes::INT_ARRAY,
             NbtTag::LongArray(_) => prefixes::LONG_ARRAY,
+        }
+    }
+}
+
+impl fmt::Display for NbtTag {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        match self {
+            NbtTag::End => write!(f, "End"),
+            NbtTag::Byte(v) => write!(f, "{}b", v),
+            NbtTag::Short(v) => write!(f, "{}s", v),
+            NbtTag::Int(v) => write!(f, "{}", v),
+            NbtTag::Long(v) => write!(f, "{}l", v),
+            NbtTag::Float(v) => write!(f, "{}f", v),
+            NbtTag::Double(v) => write!(f, "{}d", v),
+            NbtTag::ByteArray(v) => write!(f, "[B; {:?}]", v),
+            NbtTag::String(v) => write!(f, "'{}'", v),
+            NbtTag::List(v) => write!(f, "[{:?}]", v),
+            NbtTag::IntArray(v) => write!(f, "[I; {:?}]", v),
+            NbtTag::LongArray(v) => write!(f, "[L; {:?}]", v),
+            NbtTag::Compound(v) => {
+                write!(f, "{{")?;
+                for (i, (k, v)) in v.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}: {:?}", k, v)?;
+                }
+                write!(f, "}}")
+            },
         }
     }
 }
