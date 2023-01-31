@@ -55,8 +55,8 @@ use nbt_rust::de::from_bytes;
 use nbt_rust::NbtTag;
 
 let bytes = /* Some NBT formatted binary data */;
-let result: NbtTag = from_bytes(bytes);
-/* Do something with the `result` */
+let (name: String, result: NbtTag) = from_bytes(bytes);
+/* Do something with `name` and `result` */
 ```
 
 - `from_reader(impl std::io::Read)`
@@ -65,6 +65,6 @@ use nbt_rust::de::from_reader;
 use nbt_rust::NbtTag;
 
 let data = /* impl std::io::Read */;
-let result: NbtTag = from_reader(bytes);
-/* Do something with the `result` */
+let (name: String, result: NbtTag) = from_reader(bytes);
+/* Do something with `name` and `result` */
 ```
