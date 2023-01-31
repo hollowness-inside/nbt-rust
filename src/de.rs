@@ -55,51 +55,51 @@ fn read_tag_header<R: Read>(reader: &mut R) -> Result<(u8, String)> {
 }
 
 fn read_headless_byte<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 1];
-    reader.read_exact(&mut buf)?;
+    let mut byte = [0; 1];
+    reader.read_exact(&mut byte)?;
 
-    Ok(NbtTag::Byte(buf[0]))
+    Ok(NbtTag::Byte(byte[0]))
 }
 
 fn read_headless_short<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 2];
-    reader.read_exact(&mut buf)?;
+    let mut short = [0; 2];
+    reader.read_exact(&mut short)?;
 
-    Ok(NbtTag::Short(i16::from_be_bytes(buf)))
+    Ok(NbtTag::Short(i16::from_be_bytes(short)))
 }
 
 fn read_headless_int<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
+    let mut int = [0; 4];
+    reader.read_exact(&mut int)?;
 
-    Ok(NbtTag::Int(i32::from_be_bytes(buf)))
+    Ok(NbtTag::Int(i32::from_be_bytes(int)))
 }
 
 fn read_headless_long<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 8];
-    reader.read_exact(&mut buf)?;
+    let mut long = [0; 8];
+    reader.read_exact(&mut long)?;
 
-    Ok(NbtTag::Long(i64::from_be_bytes(buf)))
+    Ok(NbtTag::Long(i64::from_be_bytes(long)))
 }
 
 fn read_headless_float<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
+    let mut float = [0; 4];
+    reader.read_exact(&mut float)?;
 
-    Ok(NbtTag::Float(f32::from_be_bytes(buf)))
+    Ok(NbtTag::Float(f32::from_be_bytes(float)))
 }
 
 fn read_headless_double<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 8];
-    reader.read_exact(&mut buf)?;
+    let mut double = [0; 8];
+    reader.read_exact(&mut double)?;
 
-    Ok(NbtTag::Double(f64::from_be_bytes(buf)))
+    Ok(NbtTag::Double(f64::from_be_bytes(double)))
 }
 
 fn read_headless_byte_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
-    let len = i32::from_be_bytes(buf);
+    let mut len = [0; 4];
+    reader.read_exact(&mut len)?;
+    let len = i32::from_be_bytes(len);
 
     let mut bytes = vec![0; len as usize];
     reader.read_exact(&mut bytes)?;
@@ -108,9 +108,9 @@ fn read_headless_byte_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
 }
 
 fn read_headless_string<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 2];
-    reader.read_exact(&mut buf)?;
-    let len = u16::from_be_bytes(buf);
+    let mut len = [0; 2];
+    reader.read_exact(&mut len)?;
+    let len = u16::from_be_bytes(len);
 
     let mut bytes = vec![0; len as usize];
     reader.read_exact(&mut bytes)?;
@@ -120,13 +120,13 @@ fn read_headless_string<R: Read>(reader: &mut R) -> Result<NbtTag> {
 }
 
 fn read_headless_list<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 1];
-    reader.read_exact(&mut buf)?;
-    let prefix = buf[0];
+    let mut prefix = [0; 1];
+    reader.read_exact(&mut prefix)?;
+    let prefix = prefix[0];
 
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
-    let len = i32::from_be_bytes(buf);
+    let mut len = [0; 4];
+    reader.read_exact(&mut len)?;
+    let len = i32::from_be_bytes(len);
 
     let mut tags = Vec::new();
     for _ in 0..len {
@@ -153,30 +153,30 @@ fn read_headless_compound<R: Read>(reader: &mut R) -> Result<NbtTag> {
 }
 
 fn read_headless_int_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
-    let len = i32::from_be_bytes(buf);
+    let mut len = [0; 4];
+    reader.read_exact(&mut len)?;
+    let len = i32::from_be_bytes(len);
 
     let mut ints = Vec::new();
     for _ in 0..len {
-        let mut buf = [0; 4];
-        reader.read_exact(&mut buf)?;
-        ints.push(i32::from_be_bytes(buf));
+        let mut int = [0; 4];
+        reader.read_exact(&mut int)?;
+        ints.push(i32::from_be_bytes(int));
     }
 
     Ok(NbtTag::IntArray(ints))
 }
 
 fn read_headless_long_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
-    let mut buf = [0; 4];
-    reader.read_exact(&mut buf)?;
-    let len = i32::from_be_bytes(buf);
+    let mut len = [0; 4];
+    reader.read_exact(&mut len)?;
+    let len = i32::from_be_bytes(len);
 
     let mut longs = Vec::new();
     for _ in 0..len {
-        let mut buf = [0; 8];
-        reader.read_exact(&mut buf)?;
-        longs.push(i64::from_be_bytes(buf));
+        let mut long = [0; 8];
+        reader.read_exact(&mut long)?;
+        longs.push(i64::from_be_bytes(long));
     }
 
     Ok(NbtTag::LongArray(longs))
