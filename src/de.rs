@@ -25,7 +25,7 @@ pub fn from_reader<R: Read>(reader: &mut R) -> Result<(String, NbtTag)> {
         _ => return Err(Error::UnknownTagType(prefix)),
     };
 
-    return Ok((name, value));
+    Ok((name, value))
 }
 
 /// Reads a single NBT tag from a byte slice
