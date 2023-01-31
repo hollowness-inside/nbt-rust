@@ -126,6 +126,7 @@ impl<W: io::Write> Serializer<W> {
     /// which can be used to serialize a compound tag
     pub fn start_compound(mut self, name: &str) -> Result<CompoundSerializer<W>> {
         self.write_header(prefixes::COMPOUND, name)?;
+        Ok(CompoundSerializer(self))
     }
 
     #[inline]
@@ -337,25 +338,17 @@ impl<W: io::Write> Serializer<W> {
 }
 
 /// A serializer for compound tags
-pub struct CompoundSerializer<W> {
-    ser: Serializer<W>,
-    is_first: bool,
-}
+pub struct CompoundSerializer<W>(Serializer<W>);
 
 impl<W: io::Write> CompoundSerializer<W> {
     /// Serializes a key-value pair into NBT
     pub fn write_field<T: Into<NbtTag>>(&mut self, key: &str, value: T) -> Result<()> {
-        if self.is_first {
-            self.ser.0.write_all(&[prefixes::COMPOUND])?;
-            self.is_first = false;
-        }
-
-        self.ser.serialize_tag(key, &value.into())
+        self.0.serialize_tag(key, &value.into())
     }
 
     /// Consumes the compound serializer and returns the underlying Serializer
     pub fn end(mut self) -> Result<Serializer<W>> {
-        self.ser.serialize_end()?;
-        Ok(self.ser)
+        self.0.serialize_end()?;
+        Ok(self.0)
     }
 }
