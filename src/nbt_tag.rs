@@ -60,20 +60,20 @@ impl fmt::Display for NbtTag {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
         match self {
             NbtTag::End => write!(f, "End"),
-            NbtTag::Byte(v) => write!(f, "{}b", v),
-            NbtTag::Short(v) => write!(f, "{}s", v),
-            NbtTag::Int(v) => write!(f, "{}", v),
-            NbtTag::Long(v) => write!(f, "{}l", v),
-            NbtTag::Float(v) => write!(f, "{}f", v),
-            NbtTag::Double(v) => write!(f, "{}d", v),
-            NbtTag::String(v) => write!(f, "\"{}\"", v),
+            NbtTag::Byte(v) => write!(f, "{v}b"),
+            NbtTag::Short(v) => write!(f, "{v}s"),
+            NbtTag::Int(v) => write!(f, "{v}"),
+            NbtTag::Long(v) => write!(f, "{v}l"),
+            NbtTag::Float(v) => write!(f, "{v}f"),
+            NbtTag::Double(v) => write!(f, "{v}d"),
+            NbtTag::String(v) => write!(f, "\"{v}\""),
             NbtTag::ByteArray(v) => {
                 write!(f, "[B; ")?;
                 for (i, v) in v.iter().enumerate() {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}", v)?;
+                    write!(f, "{v}")?;
                 }
                 write!(f, "]")
             }
@@ -83,7 +83,7 @@ impl fmt::Display for NbtTag {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}", v)?;
+                    write!(f, "{v}")?;
                 }
                 write!(f, "]")
             }
@@ -93,7 +93,7 @@ impl fmt::Display for NbtTag {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}", v)?;
+                    write!(f, "{v}")?;
                 }
                 write!(f, "]")
             }
@@ -103,7 +103,7 @@ impl fmt::Display for NbtTag {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}", v)?;
+                    write!(f, "{v}")?;
                 }
                 write!(f, "]")
             }
@@ -113,7 +113,7 @@ impl fmt::Display for NbtTag {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "\"{}\": {}", k, v)?;
+                    write!(f, "\"{k}\": {v}")?;
                 }
                 write!(f, "}}")
             }
