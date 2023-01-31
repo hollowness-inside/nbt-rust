@@ -27,7 +27,7 @@ impl<W: io::Write> Serializer<W> {
     /// Serializes a tag into NBT
     pub fn serialize_tag(&mut self, k: &str, v: &NbtTag) -> Result<()> {
         match v {
-            NbtTag::End => self.write_end(),
+            NbtTag::End => self.serialize_end(),
             NbtTag::Byte(v) => self.serialize_byte(k, *v),
             NbtTag::Short(v) => self.serialize_short(k, *v),
             NbtTag::Int(v) => self.serialize_int(k, *v),
@@ -45,7 +45,7 @@ impl<W: io::Write> Serializer<W> {
 
     /// Writes the end tag to the underlying writer
     #[inline]
-    pub fn write_end(&mut self) -> Result<()> {
+    pub fn serialize_end(&mut self) -> Result<()> {
         self.0.write_all(&[prefixes::END])?;
         Ok(())
     }
