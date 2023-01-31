@@ -1,4 +1,4 @@
-use std::fmt::{self, Formatter, Error};
+use std::fmt::{self, Error, Formatter};
 
 /// NBT Tag
 
@@ -19,7 +19,7 @@ pub(crate) mod prefixes {
     pub const LONG_ARRAY: u8 = 0x0c;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum NbtTag {
     End,
     Byte(u8),
@@ -66,21 +66,57 @@ impl fmt::Display for NbtTag {
             NbtTag::Long(v) => write!(f, "{}l", v),
             NbtTag::Float(v) => write!(f, "{}f", v),
             NbtTag::Double(v) => write!(f, "{}d", v),
-            NbtTag::ByteArray(v) => write!(f, "[B; {:?}]", v),
-            NbtTag::String(v) => write!(f, "'{}'", v),
-            NbtTag::List(v) => write!(f, "[{:?}]", v),
-            NbtTag::IntArray(v) => write!(f, "[I; {:?}]", v),
-            NbtTag::LongArray(v) => write!(f, "[L; {:?}]", v),
+            NbtTag::String(v) => write!(f, "\"{}\"", v),
+            NbtTag::ByteArray(v) => {
+                write!(f, "[B; ")?;
+                for (i, v) in v.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", v)?;
+                }
+                write!(f, "]")
+            }
+            NbtTag::List(v) => {
+                write!(f, "[")?;
+                for (i, v) in v.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", v)?;
+                }
+                write!(f, "]")
+            }
+            NbtTag::IntArray(v) => {
+                write!(f, "[I; ")?;
+                for (i, v) in v.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", v)?;
+                }
+                write!(f, "]")
+            }
+            NbtTag::LongArray(v) => {
+                write!(f, "[L; ")?;
+                for (i, v) in v.iter().enumerate() {
+                    if i != 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", v)?;
+                }
+                write!(f, "]")
+            }
             NbtTag::Compound(v) => {
                 write!(f, "{{")?;
                 for (i, (k, v)) in v.iter().enumerate() {
                     if i != 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{}: {:?}", k, v)?;
+                    write!(f, "\"{}\": {}", k, v)?;
                 }
                 write!(f, "}}")
-            },
+            }
         }
     }
 }
