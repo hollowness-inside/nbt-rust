@@ -128,7 +128,10 @@ impl<W: io::Write> Serializer<W> {
         self.write_header(prefixes::COMPOUND, name)?;
         Ok(CompoundSerializer(self))
     }
+}
 
+/// Headless methods for serializing NBT tags
+impl <W: io::Write> Serializer<W> {
     /// Writes a header to the provided tag
     #[inline]
     fn write_header(&mut self, prefix: u8, name: &str) -> Result<()> {
