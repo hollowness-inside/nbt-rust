@@ -4,6 +4,7 @@ use std::{error, fmt, io};
 pub enum Error {
     Io(io::Error),
     Utf8(std::string::FromUtf8Error),
+    Serde(String),
     UnknownTagType(u8),
     EmptySequence,
     ElementTypesDiffer,
@@ -21,11 +22,18 @@ impl From<std::string::FromUtf8Error> for Error {
     }
 }
 
+impl serde::ser::Error for Error {
+    fn custom<T: fmt::Display>(msg: T) -> Self {
+        Error::Serde(msg.to_string())
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::Io(error) => write!(f, "IO error: {error}"),
             Error::Utf8(error) => write!(f, "UTF-8 error: {error}"),
+            Error::Serde(error) => write!(f, "Serde error: {error}"),
             Error::UnknownTagType(byte) => write!(f, "Unknown tag type: {byte}"),
             Error::EmptySequence => write!(f, "Empty sequence"),
             Error::ElementTypesDiffer => write!(f, "Element types differ"),
