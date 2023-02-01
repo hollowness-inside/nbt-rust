@@ -3,11 +3,7 @@ use std::{
     io::{Cursor, Read},
 };
 
-use crate::{
-    error::{Result},
-    nbt_tag::TagType,
-    NbtTag,
-};
+use crate::{error::Result, nbt_tag::TagType, NbtTag};
 
 /// Reads a single NBT tag from a reader
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<(String, NbtTag)> {
