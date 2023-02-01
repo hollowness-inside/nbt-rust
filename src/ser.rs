@@ -283,7 +283,7 @@ impl<W: io::Write> Serializer<W> {
             TagType::Compound => {
                 for i in value {
                     if let NbtTag::Compound(v) = i {
-                        self.write_compound(&v)?;
+                        self.write_compound(v)?;
                     }
                 }
             }
