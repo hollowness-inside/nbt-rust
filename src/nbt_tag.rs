@@ -1,4 +1,4 @@
-use std::fmt::{self, Error, Formatter};
+use std::{fmt::{self, Error, Formatter}, collections::HashMap};
 
 /// In the binary format, each tag is prefixed with a single byte
 /// which identifies its type. The tag prefixes are listed below.
@@ -31,7 +31,7 @@ pub enum NbtTag {
     ByteArray(Vec<u8>),
     String(String),
     List(Vec<NbtTag>),
-    Compound(Vec<(String, NbtTag)>),
+    Compound(HashMap<String, NbtTag>),
     IntArray(Vec<i32>),
     LongArray(Vec<i64>),
 }
@@ -202,6 +202,13 @@ impl From<Vec<NbtTag>> for NbtTag {
 
 impl From<Vec<(String, NbtTag)>> for NbtTag {
     fn from(v: Vec<(String, NbtTag)>) -> Self {
+        let h: HashMap<String, NbtTag> = v.into_iter().collect();
+        NbtTag::Compound(h)
+    }
+}
+
+impl From<HashMap<String, NbtTag>> for NbtTag {
+    fn from(v: HashMap<String, NbtTag>) -> Self {
         NbtTag::Compound(v)
     }
 }

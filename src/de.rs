@@ -1,4 +1,4 @@
-use std::io::{Cursor, Read};
+use std::{io::{Cursor, Read}, collections::HashMap};
 
 use crate::{
     error::{Error, Result},
@@ -156,6 +156,8 @@ fn read_headless_compound<R: Read>(reader: &mut R) -> Result<NbtTag> {
 
         tags.push((name, value));
     }
+
+    let tags: HashMap<String, NbtTag> = tags.into_iter().collect();
     Ok(NbtTag::Compound(tags))
 }
 

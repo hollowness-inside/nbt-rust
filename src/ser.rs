@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, collections::HashMap};
 
 use crate::{
     error::{Error, Result},
@@ -105,7 +105,7 @@ impl<W: io::Write> Serializer<W> {
     }
 
     /// Serializes a vector of key-value pairs into NBT
-    pub fn serialize_compound<S: ToString>(&mut self, k: &str, v: &[(S, NbtTag)]) -> Result<()> {
+    pub fn serialize_compound(&mut self, k: &str, v: &HashMap<String, NbtTag>) -> Result<()> {
         self.write_header(prefixes::COMPOUND, k)?;
         self.write_compound(v)
     }
@@ -280,7 +280,7 @@ impl<W: io::Write> Serializer<W> {
             prefixes::COMPOUND => {
                 for i in value {
                     if let NbtTag::Compound(v) = i {
-                        self.write_compound(v)?;
+                        self.write_compound(&v)?;
                     }
                 }
             }
@@ -307,7 +307,7 @@ impl<W: io::Write> Serializer<W> {
     }
 
     /// Headless version of serialize_compound()
-    fn write_compound<S: ToString>(&mut self, v: &[(S, NbtTag)]) -> Result<()> {
+    fn write_compound(&mut self, v: &HashMap<String, NbtTag>) -> Result<()> {
         for (name, tag) in v {
             self.serialize_tag(&name.to_string(), tag)?;
         }
