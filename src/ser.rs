@@ -201,11 +201,11 @@ impl<W: io::Write> Serializer<W> {
     /// Serializes a slice of NBT tags into NBT
     #[inline]
     fn write_list(&mut self, value: &[NbtTag]) -> Result<()> {
-        let Some(tag_type) = value.first().map(|t| t.tag_type()) else {
+        let Some(tag_type) = value.first().map(|t| t.tag_prefix()) else {
             return Err(Error::EmptySequence);
         };
 
-        if !value.iter().all(|x| x.tag_type() == tag_type) {
+        if !value.iter().all(|x| x.tag_prefix() == tag_type) {
             return Err(Error::ElementTypesDiffer);
         }
 

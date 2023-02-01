@@ -38,7 +38,7 @@ pub enum NbtTag {
 
 impl NbtTag {
     /// Returns the tag prefix of the tag.
-    pub const fn tag_type(&self) -> u8 {
+    pub const fn tag_prefix(&self) -> u8 {
         match self {
             NbtTag::End => prefixes::END,
             NbtTag::Byte(_) => prefixes::BYTE,
