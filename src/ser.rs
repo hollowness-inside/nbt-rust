@@ -1,8 +1,9 @@
-use std::{io, collections::HashMap};
+use std::{collections::HashMap, io};
 
 use crate::{
     error::{Error, Result},
-    NbtTag, nbt_tag::TagType,
+    nbt_tag::TagType,
+    NbtTag,
 };
 
 pub struct Serializer<W>(W);
@@ -130,7 +131,7 @@ impl<W: io::Write> Serializer<W> {
 }
 
 /// Headless methods for serializing NBT tags
-impl <W: io::Write> Serializer<W> {
+impl<W: io::Write> Serializer<W> {
     /// Writes a header to the provided tag
     #[inline]
     fn write_header(&mut self, prefix: u8, name: &str) -> Result<()> {

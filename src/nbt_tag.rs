@@ -1,4 +1,7 @@
-use std::{fmt::{self, Formatter}, collections::HashMap};
+use std::{
+    collections::HashMap,
+    fmt::{self, Formatter},
+};
 
 use crate::error::Error;
 

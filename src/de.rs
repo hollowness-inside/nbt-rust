@@ -1,8 +1,12 @@
-use std::{io::{Cursor, Read}, collections::HashMap};
+use std::{
+    collections::HashMap,
+    io::{Cursor, Read},
+};
 
 use crate::{
-    error::{Error, Result},
-    NbtTag, nbt_tag::TagType,
+    error::{Result},
+    nbt_tag::TagType,
+    NbtTag,
 };
 
 /// Reads a single NBT tag from a reader
