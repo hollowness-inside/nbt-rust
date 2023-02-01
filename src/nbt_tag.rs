@@ -1,8 +1,7 @@
 use std::fmt::{self, Error, Formatter};
 
-/// NBT Tag
-
-/// Prefixes for each tag type
+/// In the binary format, each tag is prefixed with a single byte
+/// which identifies its type. The tag prefixes are listed below.
 pub(crate) mod prefixes {
     pub const END: u8 = 0x00;
     pub const BYTE: u8 = 0x01;
@@ -19,6 +18,7 @@ pub(crate) mod prefixes {
     pub const LONG_ARRAY: u8 = 0x0c;
 }
 
+/// The NbtTag enum represents all the possible NBT tags.
 #[derive(Clone)]
 pub enum NbtTag {
     End,
@@ -37,6 +37,7 @@ pub enum NbtTag {
 }
 
 impl NbtTag {
+    /// Returns the tag prefix of the tag.
     pub const fn tag_type(&self) -> u8 {
         match self {
             NbtTag::End => prefixes::END,
