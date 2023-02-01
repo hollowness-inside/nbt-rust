@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io};
+use std::{collections::HashMap, io, result};
 
 use crate::{
     error::{Error, Result},
@@ -7,6 +7,196 @@ use crate::{
 };
 
 pub struct Serializer<W>(W);
+
+impl<'a, W: io::Write> serde::Serializer for &'a Serializer<W> {
+    type Ok = ();
+    type Error = Error;
+
+    type SerializeSeq;
+    type SerializeTuple;
+    type SerializeTupleStruct;
+    type SerializeTupleVariant;
+
+    type SerializeMap;
+    type SerializeStruct;
+    type SerializeStructVariant;
+
+    fn serialize_bool(self, v: bool) -> result::Result<Self::Ok, Self::Error> {
+        self.write_byte(if v { 1 } else { 0 })?;
+        Ok(())
+    }
+
+    fn serialize_i8(self, v: i8) -> result::Result<Self::Ok, Self::Error> {
+        self.write_byte(v as u8)?;
+        Ok(())
+    }
+
+    fn serialize_i16(self, v: i16) -> result::Result<Self::Ok, Self::Error> {
+        self.write_short(v)?;
+        Ok(())
+    }
+
+    fn serialize_i32(self, v: i32) -> result::Result<Self::Ok, Self::Error> {
+        self.write_int(v)?;
+        Ok(())
+    }
+
+    fn serialize_i64(self, v: i64) -> result::Result<Self::Ok, Self::Error> {
+        self.write_long(v)?;
+        Ok(())
+    }
+
+    fn serialize_u8(self, v: u8) -> result::Result<Self::Ok, Self::Error> {
+        self.write_byte(v)?;
+        Ok(())
+    }
+
+    fn serialize_u16(self, v: u16) -> result::Result<Self::Ok, Self::Error> {
+        self.write_short(v as i16)?;
+        Ok(())
+    }
+
+    fn serialize_u32(self, v: u32) -> result::Result<Self::Ok, Self::Error> {
+        self.write_int(v as i32)?;
+        Ok(())
+    }
+
+    fn serialize_u64(self, v: u64) -> result::Result<Self::Ok, Self::Error> {
+        self.write_long(v as i64)?;
+        Ok(())
+    }
+
+    fn serialize_f32(self, v: f32) -> result::Result<Self::Ok, Self::Error> {
+        self.write_float(v)?;
+        Ok(())
+    }
+
+    fn serialize_f64(self, v: f64) -> result::Result<Self::Ok, Self::Error> {
+        self.write_double(v)?;
+        Ok(())
+    }
+
+    fn serialize_char(self, v: char) -> result::Result<Self::Ok, Self::Error> {
+        self.write_byte(v as u8)?;
+        Ok(())
+    }
+
+    fn serialize_str(self, v: &str) -> result::Result<Self::Ok, Self::Error> {
+        self.write_string(v)?;
+        Ok(())
+    }
+
+    fn serialize_bytes(self, v: &[u8]) -> result::Result<Self::Ok, Self::Error> {
+        self.write_byte_array(v)?;
+        Ok(())
+    }
+
+    fn serialize_none(self) -> result::Result<Self::Ok, Self::Error> {
+        unimplemented!()
+    }
+
+    fn serialize_some<T: ?Sized>(self, value: &T) -> result::Result<Self::Ok, Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(self)
+    }
+
+    fn serialize_unit(self) -> result::Result<Self::Ok, Self::Error> {
+        unimplemented!()
+    }
+
+    fn serialize_unit_struct(self, name: &'static str) -> result::Result<Self::Ok, Self::Error> {
+        self.write_string(name)?;
+        Ok(())
+    }
+
+    fn serialize_unit_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+    ) -> result::Result<Self::Ok, Self::Error> {
+        self.write_string(variant)?;
+        Ok(())
+    }
+
+    fn serialize_newtype_struct<T: ?Sized>(
+        self,
+        name: &'static str,
+        value: &T,
+    ) -> result::Result<Self::Ok, Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(self)
+    }
+
+    fn serialize_newtype_variant<T: ?Sized>(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        value: &T,
+    ) -> result::Result<Self::Ok, Self::Error>
+    where
+        T: serde::Serialize,
+    {
+        self.write_header(TagType::String, variant)?;
+        value.serialize(self)
+    }
+
+    fn serialize_seq(self, len: Option<usize>) -> result::Result<Self::SerializeSeq, Self::Error> {
+        Ok(Self::SerializeSeq {
+            serializer: self,
+            len: len.ok_or(Error::UnknownSize)?,
+        })
+    }
+
+    fn serialize_tuple(self, len: usize) -> result::Result<Self::SerializeTuple, Self::Error> {
+        self.serialize_seq(Some(len))
+    }
+
+    fn serialize_tuple_struct(
+        self,
+        name: &'static str,
+        len: usize,
+    ) -> result::Result<Self::SerializeTupleStruct, Self::Error> {
+        self.serialize_seq(Some(len))
+    }
+
+    fn serialize_tuple_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        len: usize,
+    ) -> result::Result<Self::SerializeTupleVariant, Self::Error> {
+        self.serialize_seq(Some(len))
+    }
+
+    fn serialize_map(self, len: Option<usize>) -> result::Result<Self::SerializeMap, Self::Error> {
+        Ok(Self::SerializeMap { serializer: self })
+    }
+
+    fn serialize_struct(
+        self,
+        name: &'static str,
+        len: usize,
+    ) -> result::Result<Self::SerializeStruct, Self::Error> {
+        todo!()
+    }
+
+    fn serialize_struct_variant(
+        self,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        len: usize,
+    ) -> result::Result<Self::SerializeStructVariant, Self::Error> {
+        todo!()
+    }
+}
 
 impl<W: io::Write> Serializer<W> {
     /// Creates a new serializer that writes to the given writer
