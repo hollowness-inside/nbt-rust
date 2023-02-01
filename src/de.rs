@@ -2,27 +2,26 @@ use std::{io::{Cursor, Read}, collections::HashMap};
 
 use crate::{
     error::{Error, Result},
-    nbt_tag::prefixes,
-    NbtTag,
+    NbtTag, nbt_tag::TagType,
 };
 
 /// Reads a single NBT tag from a reader
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<(String, NbtTag)> {
     let (prefix, name) = read_tag_header(reader)?;
     let value = match prefix {
-        prefixes::BYTE => read_headless_byte(reader)?,
-        prefixes::SHORT => read_headless_short(reader)?,
-        prefixes::INT => read_headless_int(reader)?,
-        prefixes::LONG => read_headless_long(reader)?,
-        prefixes::FLOAT => read_headless_float(reader)?,
-        prefixes::DOUBLE => read_headless_double(reader)?,
-        prefixes::BYTE_ARRAY => read_headless_byte_array(reader)?,
-        prefixes::STRING => read_headless_string(reader)?,
-        prefixes::LIST => read_headless_list(reader)?,
-        prefixes::COMPOUND => read_headless_compound(reader)?,
-        prefixes::INT_ARRAY => read_headless_int_array(reader)?,
-        prefixes::LONG_ARRAY => read_headless_long_array(reader)?,
-        _ => return Err(Error::UnknownTagType(prefix)),
+        TagType::Byte => read_headless_byte(reader)?,
+        TagType::Short => read_headless_short(reader)?,
+        TagType::Int => read_headless_int(reader)?,
+        TagType::Long => read_headless_long(reader)?,
+        TagType::Float => read_headless_float(reader)?,
+        TagType::Double => read_headless_double(reader)?,
+        TagType::ByteArray => read_headless_byte_array(reader)?,
+        TagType::String => read_headless_string(reader)?,
+        TagType::List => read_headless_list(reader)?,
+        TagType::Compound => read_headless_compound(reader)?,
+        TagType::IntArray => read_headless_int_array(reader)?,
+        TagType::LongArray => read_headless_long_array(reader)?,
+        TagType::End => NbtTag::End,
     };
 
     Ok((name, value))
@@ -34,12 +33,12 @@ pub fn from_bytes(bytes: &[u8]) -> Result<(String, NbtTag)> {
     from_reader(&mut reader)
 }
 
-fn read_tag_header<R: Read>(reader: &mut R) -> Result<(u8, String)> {
+fn read_tag_header<R: Read>(reader: &mut R) -> Result<(TagType, String)> {
     let mut prefix = [0; 1];
     reader.read_exact(&mut prefix)?;
-    let prefix = prefix[0];
+    let prefix: TagType = prefix[0].try_into()?;
 
-    if prefix == prefixes::END {
+    if prefix == TagType::End {
         return Ok((prefix, String::new()));
     }
 
@@ -129,7 +128,7 @@ fn read_headless_string<R: Read>(reader: &mut R) -> Result<NbtTag> {
 fn read_headless_list<R: Read>(reader: &mut R) -> Result<NbtTag> {
     let mut prefix = [0; 1];
     reader.read_exact(&mut prefix)?;
-    let prefix = prefix[0];
+    let prefix: TagType = prefix[0].try_into()?;
 
     let mut len = [0; 4];
     reader.read_exact(&mut len)?;
@@ -148,7 +147,7 @@ fn read_headless_compound<R: Read>(reader: &mut R) -> Result<NbtTag> {
 
     loop {
         let (prefix, name) = read_tag_header(reader)?;
-        if prefix == prefixes::END {
+        if prefix == TagType::End {
             break;
         }
 
@@ -191,20 +190,20 @@ fn read_headless_long_array<R: Read>(reader: &mut R) -> Result<NbtTag> {
     Ok(NbtTag::LongArray(longs))
 }
 
-fn read_headless_tag<R: Read>(reader: &mut R, prefix: u8) -> Result<NbtTag> {
+fn read_headless_tag<R: Read>(reader: &mut R, prefix: TagType) -> Result<NbtTag> {
     match prefix {
-        prefixes::BYTE => read_headless_byte(reader),
-        prefixes::SHORT => read_headless_short(reader),
-        prefixes::INT => read_headless_int(reader),
-        prefixes::LONG => read_headless_long(reader),
-        prefixes::FLOAT => read_headless_float(reader),
-        prefixes::DOUBLE => read_headless_double(reader),
-        prefixes::BYTE_ARRAY => read_headless_byte_array(reader),
-        prefixes::STRING => read_headless_string(reader),
-        prefixes::LIST => read_headless_list(reader),
-        prefixes::COMPOUND => read_headless_compound(reader),
-        prefixes::INT_ARRAY => read_headless_int_array(reader),
-        prefixes::LONG_ARRAY => read_headless_long_array(reader),
-        _ => Err(Error::UnknownTagType(prefix)),
+        TagType::Byte => read_headless_byte(reader),
+        TagType::Short => read_headless_short(reader),
+        TagType::Int => read_headless_int(reader),
+        TagType::Long => read_headless_long(reader),
+        TagType::Float => read_headless_float(reader),
+        TagType::Double => read_headless_double(reader),
+        TagType::ByteArray => read_headless_byte_array(reader),
+        TagType::String => read_headless_string(reader),
+        TagType::List => read_headless_list(reader),
+        TagType::Compound => read_headless_compound(reader),
+        TagType::IntArray => read_headless_int_array(reader),
+        TagType::LongArray => read_headless_long_array(reader),
+        TagType::End => Ok(NbtTag::End),
     }
 }

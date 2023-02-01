@@ -1,21 +1,48 @@
-use std::{fmt::{self, Error, Formatter}, collections::HashMap};
+use std::{fmt::{self, Formatter}, collections::HashMap};
+
+use crate::error::Error;
 
 /// In the binary format, each tag is prefixed with a single byte
 /// which identifies its type. The tag prefixes are listed below.
-pub(crate) mod prefixes {
-    pub const END: u8 = 0x00;
-    pub const BYTE: u8 = 0x01;
-    pub const SHORT: u8 = 0x02;
-    pub const INT: u8 = 0x03;
-    pub const LONG: u8 = 0x04;
-    pub const FLOAT: u8 = 0x05;
-    pub const DOUBLE: u8 = 0x06;
-    pub const BYTE_ARRAY: u8 = 0x07;
-    pub const STRING: u8 = 0x08;
-    pub const LIST: u8 = 0x09;
-    pub const COMPOUND: u8 = 0x0a;
-    pub const INT_ARRAY: u8 = 0x0b;
-    pub const LONG_ARRAY: u8 = 0x0c;
+#[derive(Clone, Copy, PartialEq)]
+#[repr(u8)]
+pub enum TagType {
+    End = 0x00,
+    Byte = 0x01,
+    Short = 0x02,
+    Int = 0x03,
+    Long = 0x04,
+    Float = 0x05,
+    Double = 0x06,
+    ByteArray = 0x07,
+    String = 0x08,
+    List = 0x09,
+    Compound = 0x0a,
+    IntArray = 0x0b,
+    LongArray = 0x0c,
+}
+
+impl TryFrom<u8> for TagType {
+    type Error = Error;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        match value {
+            0x00 => Ok(TagType::End),
+            0x01 => Ok(TagType::Byte),
+            0x02 => Ok(TagType::Short),
+            0x03 => Ok(TagType::Int),
+            0x04 => Ok(TagType::Long),
+            0x05 => Ok(TagType::Float),
+            0x06 => Ok(TagType::Double),
+            0x07 => Ok(TagType::ByteArray),
+            0x08 => Ok(TagType::String),
+            0x09 => Ok(TagType::List),
+            0x0a => Ok(TagType::Compound),
+            0x0b => Ok(TagType::IntArray),
+            0x0c => Ok(TagType::LongArray),
+            _ => Err(Error::UnknownTagType(value)),
+        }
+    }
 }
 
 /// The NbtTag enum represents all the possible NBT tags.
@@ -38,27 +65,27 @@ pub enum NbtTag {
 
 impl NbtTag {
     /// Returns the tag prefix of the tag.
-    pub const fn tag_prefix(&self) -> u8 {
+    pub const fn tag_prefix(&self) -> TagType {
         match self {
-            NbtTag::End => prefixes::END,
-            NbtTag::Byte(_) => prefixes::BYTE,
-            NbtTag::Short(_) => prefixes::SHORT,
-            NbtTag::Int(_) => prefixes::INT,
-            NbtTag::Long(_) => prefixes::LONG,
-            NbtTag::Float(_) => prefixes::FLOAT,
-            NbtTag::Double(_) => prefixes::DOUBLE,
-            NbtTag::ByteArray(_) => prefixes::BYTE_ARRAY,
-            NbtTag::String(_) => prefixes::STRING,
-            NbtTag::List(_) => prefixes::LIST,
-            NbtTag::Compound(_) => prefixes::COMPOUND,
-            NbtTag::IntArray(_) => prefixes::INT_ARRAY,
-            NbtTag::LongArray(_) => prefixes::LONG_ARRAY,
+            NbtTag::End => TagType::End,
+            NbtTag::Byte(_) => TagType::Byte,
+            NbtTag::Short(_) => TagType::Short,
+            NbtTag::Int(_) => TagType::Int,
+            NbtTag::Long(_) => TagType::Long,
+            NbtTag::Float(_) => TagType::Float,
+            NbtTag::Double(_) => TagType::Double,
+            NbtTag::ByteArray(_) => TagType::ByteArray,
+            NbtTag::String(_) => TagType::String,
+            NbtTag::List(_) => TagType::List,
+            NbtTag::Compound(_) => TagType::Compound,
+            NbtTag::IntArray(_) => TagType::IntArray,
+            NbtTag::LongArray(_) => TagType::LongArray,
         }
     }
 }
 
 impl fmt::Display for NbtTag {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), fmt::Error> {
         match self {
             NbtTag::End => write!(f, "End"),
             NbtTag::Byte(v) => write!(f, "{v}b"),
