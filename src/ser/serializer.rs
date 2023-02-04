@@ -21,7 +21,7 @@ macro_rules! no_name {
     };
 }
 
-pub struct Serializer<W>(W);
+pub struct Serializer<W>(pub(crate) W);
 
 impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
