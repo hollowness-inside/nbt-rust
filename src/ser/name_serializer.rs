@@ -5,11 +5,13 @@ use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
 
-pub struct NameSerializer<W>(W);
+pub struct NameSerializer<W> {
+    pub(crate) ser: W,
+}
 
 impl<W> NameSerializer<W> {
     pub fn new(writer: W) -> Self {
-        NameSerializer(writer)
+        NameSerializer { ser: writer }
     }
 }
 
@@ -70,17 +72,17 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
     }
 
     fn serialize_char(self, v: char) -> Result<()> {
-        self.0.write_all(&[v as u8])?;
+        self.ser.write_all(&[v as u8])?;
         Ok(())
     }
 
     fn serialize_str(self, v: &str) -> Result<()> {
-        self.0.write_all(v.as_bytes())?;
+        self.ser.write_all(v.as_bytes())?;
         Ok(())
     }
 
     fn serialize_bytes(self, v: &[u8]) -> Result<()> {
-        self.0.write_all(v)?;
+        self.ser.write_all(v)?;
         Ok(())
     }
 
@@ -96,7 +98,7 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
     }
 
     fn serialize_unit(self) -> Result<()> {
-        self.0.write_all(&[0, 0])?;
+        self.ser.write_all(&[0, 0])?;
         Ok(())
     }
 
