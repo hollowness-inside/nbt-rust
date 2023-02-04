@@ -391,7 +391,8 @@ impl<W: io::Write> Serializer<W> {
     /// Headless version of serialize_compound()
     fn write_compound(&mut self, v: &HashMap<String, NbtTag>) -> Result<()> {
         for (name, tag) in v {
-            self.serialize_tag(&name.to_string(), tag)?;
+            self.write_header(tag.tag_type(), name)?;
+            self.write_tag(tag)?;
         }
         self.0.write_all(&[TagType::End as u8])?;
 
