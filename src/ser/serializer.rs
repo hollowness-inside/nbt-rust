@@ -1,10 +1,6 @@
-use std::{collections::HashMap, io};
+use std::io;
 
-use crate::{
-    error::{Error, Result},
-    nbt_tag::TagType,
-    NbtTag,
-};
+use crate::error::{Error, Result};
 
 use super::{map_serializer::MapSerializer, unsupported::Unsupported};
 
