@@ -392,7 +392,7 @@ impl<W: io::Write> Serializer<W> {
     fn write_compound(&mut self, v: &HashMap<String, NbtTag>) -> Result<()> {
         for (name, tag) in v {
             self.write_header(tag.tag_type(), name)?;
-            self.write_tag(tag)?;
+            self.write_tag(tag.clone())?;
         }
         self.0.write_all(&[TagType::End as u8])?;
 
@@ -420,8 +420,7 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 
-    fn write_tag(&mut self, tag: &NbtTag) -> Result<()> {
-        let tag = *tag;
+    fn write_tag(&mut self, tag: NbtTag) -> Result<()> {
         match tag {
             NbtTag::Byte(v) => self.write_byte(v)?,
             NbtTag::Short(v) => self.write_short(v)?,
