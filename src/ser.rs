@@ -8,6 +8,12 @@ use crate::{
     NbtTag,
 };
 
+pub fn to_writer(writer: &mut impl io::Write, value: &impl ser::Serialize) -> Result<()> {
+    let mut serializer = Serializer::new(writer);
+    value.serialize(&mut serializer)?;
+    Ok(())
+}
+
 pub struct Serializer<W>(W);
 
 impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
