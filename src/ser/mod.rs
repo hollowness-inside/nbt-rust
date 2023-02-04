@@ -1,4 +1,5 @@
 pub mod serializer;
+pub mod name_serializer;
 
 use serde::Serialize;
 use std::io;
