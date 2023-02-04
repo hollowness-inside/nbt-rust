@@ -11,6 +11,7 @@ pub enum Error {
     EmptySequence,
     ElementTypesDiffer,
     UnknownSize,
+    MissingKey,
 }
 
 impl From<io::Error> for Error {
@@ -43,6 +44,7 @@ impl fmt::Display for Error {
             Error::EmptySequence => write!(f, "Empty sequence"),
             Error::ElementTypesDiffer => write!(f, "Element types differ"),
             Error::UnknownSize => write!(f, "Size must be specified"),
+            Error::MissingKey => write!(f, "Missing key"),
         }
     }
 }
