@@ -1,11 +1,11 @@
-use std::io::Cursor;
 use nbt_rust::to_writer;
+use std::io::Cursor;
 
 #[derive(serde::Serialize)]
 struct GameData {
     name: String,
     version: u32,
-    player: Player
+    player: Player,
 }
 
 #[derive(serde::Serialize)]
@@ -26,7 +26,7 @@ fn main() {
             name: "Player 1".to_string(),
             health: 100,
             // position: (0.0, 0.0, 0.0)
-        }
+        },
     };
 
     to_writer(&mut writer, &game_data).unwrap();
