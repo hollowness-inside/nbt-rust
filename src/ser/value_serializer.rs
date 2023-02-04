@@ -180,7 +180,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         name: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStruct> {
-        todo!()
+        Ok(MapSerializer {
+            ser: self.ser,
+            key: None,
+        })
     }
 
     fn serialize_struct_variant(
