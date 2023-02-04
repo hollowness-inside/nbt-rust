@@ -43,7 +43,8 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
     }
 
     fn end(self) -> Result<()> {
-        todo!()
+        self.ser.0.write_all(&[0])?;
+        Ok(())
     }
 }
 
