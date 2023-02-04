@@ -1,8 +1,12 @@
-use std::{io, collections::HashMap};
+use std::{collections::HashMap, io};
 
-use crate::{error::{Error, Result}, nbt_tag::TagType, NbtTag};
+use crate::{
+    error::{Error, Result},
+    nbt_tag::TagType,
+    NbtTag,
+};
 
-use super::serializer::Serializer;
+use super::{map_serializer::MapSerializer, serializer::Serializer, unsupported::Unsupported};
 
 pub struct ValueSerializer<'a, W> {
     pub(crate) ser: &'a mut Serializer<W>,
@@ -13,14 +17,14 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq;
-    type SerializeTuple;
-    type SerializeTupleStruct;
-    type SerializeTupleVariant;
+    type SerializeSeq = Unsupported;
+    type SerializeTuple = Unsupported;
+    type SerializeTupleStruct = Unsupported;
+    type SerializeTupleVariant = Unsupported;
 
-    type SerializeMap;
-    type SerializeStruct;
-    type SerializeStructVariant;
+    type SerializeMap = MapSerializer<'a, W>;
+    type SerializeStruct = MapSerializer<'a, W>;
+    type SerializeStructVariant = MapSerializer<'a, W>;
 
     fn serialize_bool(self, v: bool) -> Result<()> {
         self.write_byte(if v { 1 } else { 0 })?;
@@ -93,23 +97,21 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     }
 
     fn serialize_none(self) -> Result<()> {
-        unimplemented!()
+        todo!()
     }
 
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
     where
-        T: serde::Serialize,
-    {
-        value.serialize(self)
+        T: serde::Serialize {
+        todo!()
     }
 
     fn serialize_unit(self) -> Result<()> {
-        unimplemented!()
+        todo!()
     }
 
     fn serialize_unit_struct(self, name: &'static str) -> Result<()> {
-        self.write_string(name)?;
-        Ok(())
+        todo!()
     }
 
     fn serialize_unit_variant(
@@ -118,8 +120,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<()> {
-        self.write_string(variant)?;
-        Ok(())
+        todo!()
     }
 
     fn serialize_newtype_struct<T: ?Sized>(
@@ -128,9 +129,8 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         value: &T,
     ) -> Result<()>
     where
-        T: serde::Serialize,
-    {
-        value.serialize(self)
+        T: serde::Serialize {
+        todo!()
     }
 
     fn serialize_newtype_variant<T: ?Sized>(
@@ -141,21 +141,16 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         value: &T,
     ) -> Result<()>
     where
-        T: serde::Serialize,
-    {
-        self.write_header(TagType::String, variant)?;
-        value.serialize(self)
+        T: serde::Serialize {
+        todo!()
     }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Ok(Self::SerializeSeq {
-            serializer: self,
-            len: len.ok_or(Error::UnknownSize)?,
-        })
+        todo!()
     }
 
     fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
-        self.serialize_seq(Some(len))
+        todo!()
     }
 
     fn serialize_tuple_struct(
@@ -163,7 +158,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         name: &'static str,
         len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        self.serialize_seq(Some(len))
+        todo!()
     }
 
     fn serialize_tuple_variant(
@@ -173,11 +168,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
-        self.serialize_seq(Some(len))
+        todo!()
     }
 
     fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap> {
-        Ok(Self::SerializeMap { serializer: self })
+        todo!()
     }
 
     fn serialize_struct(
@@ -198,7 +193,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         todo!()
     }
 }
-
 
 /// Headless methods for serializing NBT tags
 impl<'a, W: io::Write> ValueSerializer<'a, W> {
