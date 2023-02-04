@@ -126,7 +126,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        todo!()
+        Ok(Self::SerializeStruct {
+            ser: self,
+            key: None,
+        })
     }
 }
 
