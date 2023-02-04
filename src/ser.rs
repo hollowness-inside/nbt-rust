@@ -419,6 +419,27 @@ impl<W: io::Write> Serializer<W> {
 
         Ok(())
     }
+
+    fn write_tag(&mut self, tag: &NbtTag) -> Result<()> {
+        let tag = *tag;
+        match tag {
+            NbtTag::Byte(v) => self.write_byte(v)?,
+            NbtTag::Short(v) => self.write_short(v)?,
+            NbtTag::Int(v) => self.write_int(v)?,
+            NbtTag::Long(v) => self.write_long(v)?,
+            NbtTag::Float(v) => self.write_float(v)?,
+            NbtTag::Double(v) => self.write_double(v)?,
+            NbtTag::ByteArray(v) => self.write_byte_array(&v)?,
+            NbtTag::String(v) => self.write_string(&v)?,
+            NbtTag::List(v) => self.write_list(&v)?,
+            NbtTag::Compound(v) => self.write_compound(&v)?,
+            NbtTag::IntArray(v) => self.write_int_array(&v)?,
+            NbtTag::LongArray(v) => self.write_long_array(&v)?,
+            NbtTag::End => (),
+        }
+
+        Ok(())
+    }
 }
 
 pub struct SeqSerializer;
