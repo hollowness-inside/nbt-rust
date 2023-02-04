@@ -6,7 +6,7 @@ use crate::{
     NbtTag,
 };
 
-use super::unsupported::Unsupported;
+use super::{unsupported::Unsupported, map_serializer::MapSerializer};
 
 macro_rules! no_name {
     ($name:ident) => {
