@@ -6,7 +6,7 @@ use crate::{
     NbtTag,
 };
 
-use super::{unsupported::Unsupported, map_serializer::MapSerializer};
+use super::{map_serializer::MapSerializer, unsupported::Unsupported};
 
 macro_rules! no_name {
     ($name:ident) => {
@@ -119,7 +119,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
-        Ok(Self::SerializeMap{ser: self})
+        Ok(Self::SerializeMap {
+            ser: self,
+            key: None,
+        })
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
