@@ -1,5 +1,7 @@
 use std::{collections::HashMap, io, result};
 
+use serde::ser;
+
 use crate::{
     error::{Error, Result},
     nbt_tag::TagType,
@@ -12,14 +14,14 @@ impl<'a, W: io::Write> serde::Serializer for &'a Serializer<W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq;
-    type SerializeTuple;
-    type SerializeTupleStruct;
-    type SerializeTupleVariant;
+    type SerializeSeq = SeqSerializer;
+    type SerializeTuple = Self::SerializeSeq;
+    type SerializeTupleStruct = Self::SerializeTuple;
+    type SerializeTupleVariant = Self::SerializeTupleStruct;
 
-    type SerializeMap;
-    type SerializeStruct;
-    type SerializeStructVariant;
+    type SerializeMap = MapSerializer;
+    type SerializeStruct = Self::SerializeMap;
+    type SerializeStructVariant = Self::SerializeStruct;
 
     fn serialize_bool(self, v: bool) -> result::Result<Self::Ok, Self::Error> {
         self.write_byte(if v { 1 } else { 0 })?;
@@ -418,5 +420,67 @@ impl<W: io::Write> Serializer<W> {
         self.0.write_all(&res)?;
 
         Ok(())
+    }
+}
+
+pub struct SeqSerializer;
+
+impl ser::SerializeSeq for SeqSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl ser::SerializeTuple for SeqSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl ser::SerializeTupleStruct for SeqSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl ser::SerializeTupleVariant for SeqSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
     }
 }
