@@ -4,7 +4,9 @@ use serde::ser;
 
 use crate::error::{Error, Result};
 
-use super::{serializer::Serializer, name_serializer::NameSerializer};
+use super::{
+    name_serializer::NameSerializer, serializer::Serializer, value_serializer::ValueSerializer,
+};
 
 pub struct MapSerializer<'a, W> {
     pub(super) ser: &'a mut Serializer<W>,
@@ -26,11 +28,18 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
         Ok(())
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        todo!()
+        let Some(key) = self.key else {
+            return Err(Error::MissingKey);
+        };
+
+        value.serialize(&mut ValueSerializer {
+            ser: self.ser,
+            name: self.key,
+        })
     }
 
     fn end(self) -> Result<()> {
