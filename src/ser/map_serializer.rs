@@ -38,7 +38,7 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
 
         value.serialize(&mut ValueSerializer {
             ser: self.ser,
-            name: self.key,
+            name: key,
         })
     }
 
