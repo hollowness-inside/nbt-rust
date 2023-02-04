@@ -149,7 +149,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_seq(self, len: Option<usize>) -> result::Result<Self::SerializeSeq, Self::Error> {
-        Ok(Self::SerializeSeq{})
+        Ok(Self::SerializeSeq {})
     }
 
     fn serialize_tuple(self, len: usize) -> result::Result<Self::SerializeTuple, Self::Error> {
@@ -175,7 +175,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_map(self, len: Option<usize>) -> result::Result<Self::SerializeMap, Self::Error> {
-        Ok(Self::SerializeMap{})
+        Ok(Self::SerializeMap {})
     }
 
     fn serialize_struct(
@@ -449,7 +449,8 @@ impl ser::SerializeSeq for SeqSerializer {
 
     fn serialize_element<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -464,7 +465,8 @@ impl ser::SerializeTuple for SeqSerializer {
 
     fn serialize_element<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -479,7 +481,8 @@ impl ser::SerializeTupleStruct for SeqSerializer {
 
     fn serialize_field<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -494,7 +497,8 @@ impl ser::SerializeTupleVariant for SeqSerializer {
 
     fn serialize_field<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -511,13 +515,15 @@ impl ser::SerializeMap for MapSerializer {
 
     fn serialize_key<T: ?Sized>(&mut self, key: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
     fn serialize_value<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -536,7 +542,8 @@ impl ser::SerializeStruct for MapSerializer {
         value: &T,
     ) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
@@ -555,7 +562,8 @@ impl ser::SerializeStructVariant for MapSerializer {
         value: &T,
     ) -> result::Result<(), Self::Error>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         todo!()
     }
 
