@@ -149,10 +149,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a Serializer<W> {
     }
 
     fn serialize_seq(self, len: Option<usize>) -> result::Result<Self::SerializeSeq, Self::Error> {
-        Ok(Self::SerializeSeq {
-            serializer: self,
-            len: len.ok_or(Error::UnknownSize)?,
-        })
+        Ok(Self::SerializeSeq{})
     }
 
     fn serialize_tuple(self, len: usize) -> result::Result<Self::SerializeTuple, Self::Error> {
@@ -178,7 +175,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a Serializer<W> {
     }
 
     fn serialize_map(self, len: Option<usize>) -> result::Result<Self::SerializeMap, Self::Error> {
-        Ok(Self::SerializeMap { serializer: self })
+        Ok(Self::SerializeMap{})
     }
 
     fn serialize_struct(
