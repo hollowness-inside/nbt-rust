@@ -484,3 +484,64 @@ impl ser::SerializeTupleVariant for SeqSerializer {
         todo!()
     }
 }
+
+pub struct MapSerializer;
+
+impl ser::SerializeMap for MapSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_key<T: ?Sized>(&mut self, key: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl ser::SerializeStruct for MapSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        key: &'static str,
+        value: &T,
+    ) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
+
+impl ser::SerializeStructVariant for MapSerializer {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        key: &'static str,
+        value: &T,
+    ) -> result::Result<(), Self::Error>
+    where
+        T: serde::Serialize {
+        todo!()
+    }
+
+    fn end(self) -> result::Result<Self::Ok, Self::Error> {
+        todo!()
+    }
+}
