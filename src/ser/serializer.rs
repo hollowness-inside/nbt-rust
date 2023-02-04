@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io, result};
+use std::{collections::HashMap, io};
 
 use serde::ser;
 
@@ -7,12 +7,6 @@ use crate::{
     nbt_tag::TagType,
     NbtTag,
 };
-
-pub fn to_writer(writer: &mut impl io::Write, value: &impl ser::Serialize) -> Result<()> {
-    let mut serializer = Serializer::new(writer);
-    value.serialize(&mut serializer)?;
-    Ok(())
-}
 
 macro_rules! no_name {
     ($name:ident) => {
