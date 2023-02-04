@@ -420,19 +420,3 @@ impl<W: io::Write> Serializer<W> {
         Ok(())
     }
 }
-
-/// A serializer for compound tags
-pub struct CompoundSerializer<W>(Serializer<W>);
-
-impl<W: io::Write> CompoundSerializer<W> {
-    /// Serializes a key-value pair into NBT
-    pub fn write_field<T: Into<NbtTag>>(&mut self, key: &str, value: T) -> Result<()> {
-        self.0.serialize_tag(key, &value.into())
-    }
-
-    /// Consumes the compound serializer and returns the underlying Serializer
-    pub fn end(mut self) -> Result<Serializer<W>> {
-        self.0.serialize_end()?;
-        Ok(self.0)
-    }
-}
