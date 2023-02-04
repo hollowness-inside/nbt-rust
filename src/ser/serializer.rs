@@ -1,7 +1,5 @@
 use std::{collections::HashMap, io};
 
-use serde::ser;
-
 use crate::{
     error::{Error, Result},
     nbt_tag::TagType,
@@ -121,9 +119,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
-        Ok(Self::SerializeMap {
-            ser: self,
-        })
+        Ok(Self::SerializeMap { ser: self })
     }
 
     fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
