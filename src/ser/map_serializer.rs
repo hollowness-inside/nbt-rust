@@ -7,7 +7,8 @@ use crate::error::{Error, Result};
 use super::{serializer::Serializer, name_serializer::NameSerializer};
 
 pub struct MapSerializer<'a, W> {
-    pub(crate) ser: &'a mut Serializer<W>,
+    pub(super) ser: &'a mut Serializer<W>,
+    pub(super) key: Option<Vec<u8>>,
 }
 
 impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
@@ -20,6 +21,8 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
     {
         let mut name = Vec::new();
         key.serialize(&mut NameSerializer { ser: &mut name })?;
+        self.key = Some(name);
+
         Ok(())
     }
 
