@@ -1,10 +1,16 @@
+use std::io;
+
 use serde::ser;
 
 use crate::error::{Error, Result};
 
-pub struct MapSerializer;
+use super::serializer::Serializer;
 
-impl ser::SerializeMap for MapSerializer {
+pub struct MapSerializer<'a, W> {
+    pub(crate) ser: &'a mut Serializer<W>,
+}
+
+impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
@@ -27,7 +33,7 @@ impl ser::SerializeMap for MapSerializer {
     }
 }
 
-impl ser::SerializeStruct for MapSerializer {
+impl<'a, W: io::Write> ser::SerializeStruct for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
@@ -43,7 +49,7 @@ impl ser::SerializeStruct for MapSerializer {
     }
 }
 
-impl ser::SerializeStructVariant for MapSerializer {
+impl<'a, W: io::Write> ser::SerializeStructVariant for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 

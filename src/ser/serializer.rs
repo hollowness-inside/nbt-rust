@@ -32,9 +32,9 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type SerializeTupleStruct = Unsupported;
     type SerializeTupleVariant = Unsupported;
 
-    type SerializeMap = MapSerializer;
-    type SerializeStruct = Self::SerializeMap;
-    type SerializeStructVariant = Self::SerializeStruct;
+    type SerializeMap = MapSerializer<'a, W>;
+    type SerializeStruct = MapSerializer<'a, W>;
+    type SerializeStructVariant = MapSerializer<'a, W>;
 
     no_name!(serialize_bool, bool);
     no_name!(serialize_i8, i8);
@@ -119,7 +119,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
-        Ok(Self::SerializeMap { ser: self })
+        Ok(Self::SerializeMap{ser: self})
     }
 
     fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
