@@ -1,6 +1,7 @@
 pub mod serializer;
 pub mod name_serializer;
 pub mod unsupported;
+pub mod map_serializer;
 
 use serde::Serialize;
 use std::io;
