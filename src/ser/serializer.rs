@@ -8,6 +8,8 @@ use crate::{
     NbtTag,
 };
 
+use super::unsupported::Unsupported;
+
 macro_rules! no_name {
     ($name:ident) => {
         fn $name(self) -> Result<()> {
@@ -27,10 +29,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = SeqSerializer;
-    type SerializeTuple = Self::SerializeSeq;
-    type SerializeTupleStruct = Self::SerializeTuple;
-    type SerializeTupleVariant = Self::SerializeTupleStruct;
+    type SerializeSeq = Unsupported;
+    type SerializeTuple = Unsupported;
+    type SerializeTupleStruct = Unsupported;
+    type SerializeTupleVariant = Unsupported;
 
     type SerializeMap = MapSerializer;
     type SerializeStruct = Self::SerializeMap;
@@ -370,72 +372,6 @@ impl<W: io::Write> Serializer<W> {
         }
 
         Ok(())
-    }
-}
-
-pub struct SeqSerializer;
-
-impl ser::SerializeSeq for SeqSerializer {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<()> {
-        todo!()
-    }
-}
-
-impl ser::SerializeTuple for SeqSerializer {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<()> {
-        todo!()
-    }
-}
-
-impl ser::SerializeTupleStruct for SeqSerializer {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<()> {
-        todo!()
-    }
-}
-
-impl ser::SerializeTupleVariant for SeqSerializer {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<()> {
-        todo!()
     }
 }
 
