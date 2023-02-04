@@ -10,7 +10,7 @@ use crate::{
 
 pub struct Serializer<W>(W);
 
-impl<'a, W: io::Write> serde::Serializer for &'a Serializer<W> {
+impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
     type Error = Error;
 
