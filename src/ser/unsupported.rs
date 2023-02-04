@@ -6,7 +6,7 @@ impl serde::ser::SerializeSeq for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -22,7 +22,7 @@ impl serde::ser::SerializeTuple for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -38,7 +38,7 @@ impl serde::ser::SerializeTupleStruct for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -54,7 +54,7 @@ impl serde::ser::SerializeTupleVariant for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -70,14 +70,14 @@ impl serde::ser::SerializeMap for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_key<T: ?Sized>(&mut self, key: &T) -> Result<()>
+    fn serialize_key<T: ?Sized>(&mut self, _key: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
         Err(Error::Unsupported)
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -93,7 +93,7 @@ impl serde::ser::SerializeStruct for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -109,7 +109,7 @@ impl serde::ser::SerializeStructVariant for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {

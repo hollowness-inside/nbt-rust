@@ -23,7 +23,7 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
         Ok(())
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> Result<()>
+    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -39,7 +39,7 @@ impl<'a, W: io::Write> ser::SerializeStruct for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
@@ -55,7 +55,7 @@ impl<'a, W: io::Write> ser::SerializeStructVariant for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
