@@ -1,5 +1,6 @@
 use std::io;
 
+use super::unsupported::Unsupported;
 use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
@@ -89,7 +90,8 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
 
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         value.serialize(self)
     }
 
@@ -111,13 +113,10 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         Err(Error::Unsupported)
     }
 
-    fn serialize_newtype_struct<T: ?Sized>(
-        self,
-        name: &'static str,
-        value: &T,
-    ) -> Result<()>
+    fn serialize_newtype_struct<T: ?Sized>(self, name: &'static str, value: &T) -> Result<()>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         value.serialize(self)
     }
 
@@ -129,7 +128,8 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         value: &T,
     ) -> Result<()>
     where
-        T: serde::Serialize {
+        T: serde::Serialize,
+    {
         Err(Error::Unsupported)
     }
 
@@ -163,11 +163,7 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         Err(Error::Unsupported)
     }
 
-    fn serialize_struct(
-        self,
-        name: &'static str,
-        len: usize,
-    ) -> Result<Self::SerializeStruct> {
+    fn serialize_struct(self, name: &'static str, len: usize) -> Result<Self::SerializeStruct> {
         Err(Error::Unsupported)
     }
 
@@ -178,119 +174,6 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::Unsupported)
-    }
-}
-
-pub struct Unsupported;
-
-impl serde::ser::SerializeSeq for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeTuple for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeTupleStruct for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeTupleVariant for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeMap for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_key<T: ?Sized>(&mut self, key: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn serialize_value<T: ?Sized>(&mut self, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeStruct for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
-    }
-}
-
-impl serde::ser::SerializeStructVariant for Unsupported {
-    type Ok = ();
-    type Error = Error;
-
-    fn serialize_field<T: ?Sized>(&mut self, key: &'static str, value: &T) -> Result<()>
-    where
-        T: serde::Serialize {
-        Err(Error::Unsupported)
-    }
-
-    fn end(self) -> Result<()> {
         Err(Error::Unsupported)
     }
 }
