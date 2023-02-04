@@ -32,7 +32,7 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
     where
         T: serde::Serialize,
     {
-        let Some(key) = self.key else {
+        let Some(key) = self.key.clone() else {
             return Err(Error::MissingKey);
         };
 
