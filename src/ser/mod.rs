@@ -11,11 +11,15 @@ use self::serializer::Serializer;
 use crate::error::Result;
 
 /// Serialize a value into a byte stream and write it to the given writer.
-/// 
-/// Since in the NBT format, the root value is always a compound, this function
+///
+/// Since in the NBT format the root value is always a compound, this function
 /// will return an error if the given value is not of a compound type i.e. a
 /// struct or a map.
-pub fn to_writer(writer: &mut impl io::Write, value: &impl Serialize) -> Result<()> {
+pub fn to_writer<W, S>(writer: &mut W, value: &S) -> Result<()>
+where
+    W: io::Write,
+    S: Serialize,
+{
     let mut serializer = Serializer::new(writer);
     value.serialize(&mut serializer)?;
     Ok(())
