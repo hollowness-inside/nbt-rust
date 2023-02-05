@@ -5,7 +5,7 @@ use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
 
-pub struct KeySerializer<W> {
+pub(crate) struct KeySerializer<W> {
     pub(crate) ser: W,
 }
 
