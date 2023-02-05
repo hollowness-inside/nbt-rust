@@ -12,7 +12,7 @@ struct GameData {
 struct Player {
     name: String,
     health: u32,
-    // position: (f32, f32, f32)
+    position: (f32, f32, f32),
 }
 
 fn main() {
@@ -25,7 +25,7 @@ fn main() {
         player: Player {
             name: "Player 1".to_string(),
             health: 100,
-            // position: (0.0, 0.0, 0.0)
+            position: (0.0, 0.0, 0.0),
         },
     };
 

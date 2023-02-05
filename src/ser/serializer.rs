@@ -10,12 +10,12 @@ use super::{map_serializer::MapSerializer, unsupported::Unsupported};
 macro_rules! no_name {
     ($name:ident) => {
         fn $name(self) -> Result<()> {
-            Err(Error::NoName)
+            Err(Error::UnsupportedMethod(format!("Serializer::{}", stringify!($name))))
         }
     };
     ($name:ident, $($types:ty),*) => {
         fn $name(self, $(_: $types),*) -> Result<()> {
-            Err(Error::NoName)
+            Err(Error::UnsupportedMethod(format!("Serializer::{}", stringify!($name))))
         }
     };
 }
@@ -55,11 +55,15 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     no_name!(serialize_unit_struct, &'static str);
 
     fn serialize_seq(self, _: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_seq".to_string(),
+        ))
     }
 
     fn serialize_tuple(self, _: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_tuple".to_string(),
+        ))
     }
 
     fn serialize_tuple_struct(
@@ -67,14 +71,18 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         _: &'static str,
         _: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_tuple_struct".to_string(),
+        ))
     }
 
     fn serialize_some<T: ?Sized>(self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_some".to_string(),
+        ))
     }
 
     fn serialize_newtype_variant<T: ?Sized>(
@@ -87,7 +95,9 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_newtype_variant".to_string(),
+        ))
     }
 
     fn serialize_struct_variant(
@@ -97,7 +107,9 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         _: &'static str,
         _: usize,
     ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_struct_variant".to_string(),
+        ))
     }
 
     fn serialize_tuple_variant(
@@ -107,7 +119,9 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         _: &'static str,
         _: usize,
     ) -> Result<Self::SerializeTupleVariant> {
-        Err(Error::NoName)
+        Err(Error::UnsupportedMethod(
+            "Serializer::serialize_tuple_variant".to_string(),
+        ))
     }
 
     fn serialize_newtype_struct<T: ?Sized>(self, _: &'static str, value: &T) -> Result<()>
