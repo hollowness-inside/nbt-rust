@@ -22,8 +22,7 @@ macro_rules! impl_from {
     };
 }
 
-/// In the binary format, each tag is prefixed with a single byte
-/// which identifies its type. The tag prefixes are listed below.
+/// The TagType enum represents all the possible NBT tag types.
 #[derive(Clone, Copy, PartialEq)]
 #[repr(u8)]
 pub enum TagType {
@@ -68,18 +67,49 @@ impl TryFrom<u8> for TagType {
 /// The NbtTag enum represents all the possible NBT tags.
 #[derive(Clone)]
 pub enum NbtTag {
+    /// Used to mark the end of compound tags.
     End,
+
+    /// A signed 8-bit integer.
     Byte(u8),
+
+    /// A signed 16-bit integer.
     Short(i16),
+
+    /// A signed 32-bit integer.
     Int(i32),
+
+    /// A signed 64-bit integer.
     Long(i64),
+
+    /// A 32-bit, single-precision floating-point number.
+    ///
+    /// See [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point) for details.
     Float(f32),
+
+    /// A 64-bit, double-precision floating-point number.
+    ///
+    /// See [IEEE floating point](https://en.wikipedia.org/wiki/IEEE_floating_point) for details.
     Double(f64),
+
+    /// An ordered list of 8-bit integers.
     ByteArray(Vec<u8>),
+
+    /// A sequence of characters.
     String(String),
+
+    /// An ordered list of tags. The tags must be of the same type, determined by the first tag in the list.
     List(Vec<NbtTag>),
+
+    /// An ordered list of attribute-value pairs.
+    ///
+    /// Each tag can be of any type.
     Compound(HashMap<String, NbtTag>),
+
+    /// An ordered list of 32-bit integers.
     IntArray(Vec<i32>),
+
+    /// An ordered list of 64-bit integers.
     LongArray(Vec<i64>),
 }
 
