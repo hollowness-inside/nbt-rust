@@ -4,7 +4,7 @@ use std::io::Cursor;
 #[derive(serde::Serialize)]
 struct GameData {
     name: String,
-    version: u32,
+    version: u64,
     player: Player,
 }
 
