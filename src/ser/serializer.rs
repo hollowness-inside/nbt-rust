@@ -62,28 +62,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
     unsupported!(serialize_unit);
     unsupported!(serialize_unit_struct, &'static str);
-
-    fn serialize_seq(self, _: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_seq".to_string(),
-        ))
-    }
-
-    fn serialize_tuple(self, _: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_tuple".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_struct(
-        self,
-        _: &'static str,
-        _: usize,
-    ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_tuple_struct".to_string(),
-        ))
-    }
+    unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
+    unsupported!(serialize_tuple -> SerializeTuple, usize);
+    unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
+    unsupported!(serialize_struct_variant -> SerializeStructVariant, &'static str, u32, &'static str, usize);
+    unsupported!(serialize_tuple_variant -> SerializeTupleVariant, &'static str, u32, &'static str, usize);
 
     fn serialize_some<T: ?Sized>(self, _: &T) -> Result<()>
     where
@@ -106,30 +89,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     {
         Err(Error::UnsupportedMethod(
             "Serializer::serialize_newtype_variant".to_string(),
-        ))
-    }
-
-    fn serialize_struct_variant(
-        self,
-        _: &'static str,
-        _: u32,
-        _: &'static str,
-        _: usize,
-    ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_struct_variant".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_variant(
-        self,
-        _: &'static str,
-        _: u32,
-        _: &'static str,
-        _: usize,
-    ) -> Result<Self::SerializeTupleVariant> {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_tuple_variant".to_string(),
         ))
     }
 }

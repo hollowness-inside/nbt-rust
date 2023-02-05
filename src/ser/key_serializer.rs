@@ -71,6 +71,13 @@ impl<'a, W: io::Write> Serializer for &'a mut KeySerializer<W> {
     unsupported!(serialize_unit_struct, &'static str);
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
     unsupported!(serialize_unit);
+    unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
+    unsupported!(serialize_tuple -> SerializeTuple, usize);
+    unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
+    unsupported!(serialize_tuple_variant -> SerializeTupleVariant, &'static str, u32, &'static str, usize);
+    unsupported!(serialize_map -> SerializeMap, Option<usize>);
+    unsupported!(serialize_struct -> SerializeStruct, &'static str, usize);
+    unsupported!(serialize_struct_variant -> SerializeStructVariant, &'static str, u32, &'static str, usize);
 
     fn serialize_newtype_variant<T: ?Sized>(
         self,
@@ -84,64 +91,6 @@ impl<'a, W: io::Write> Serializer for &'a mut KeySerializer<W> {
     {
         Err(Error::UnsupportedMethod(
             "KeySerializer::serialize_newtype_variant".to_string(),
-        ))
-    }
-
-    fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_seq".to_string(),
-        ))
-    }
-
-    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_tuple".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_struct(
-        self,
-        _name: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_tuple_struct".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeTupleVariant> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_tuple_variant".to_string(),
-        ))
-    }
-
-    fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_map".to_string(),
-        ))
-    }
-
-    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_struct".to_string(),
-        ))
-    }
-
-    fn serialize_struct_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_struct_variant".to_string(),
         ))
     }
 }

@@ -6,8 +6,15 @@ macro_rules! unsupported {
             Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
         }
     };
+
     ($name:ident, $($types:ty),*) => {
         fn $name(self, $(_: $types),*) -> Result<()> {
+            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+        }
+    };
+
+    ($name:ident -> $out:ident, $($types:ty),*) => {
+        fn $name(self, $(_: $types),*) -> Result<Self::$out> {
             Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
         }
     };
