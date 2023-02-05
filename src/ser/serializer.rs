@@ -1,6 +1,9 @@
 use std::io;
 
-use crate::error::{Error, Result};
+use crate::{
+    error::{Error, Result},
+    nbt_tag::TagType,
+};
 
 use super::{map_serializer::MapSerializer, unsupported::Unsupported};
 
@@ -115,6 +118,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
+        self.0.write_all(&[TagType::Compound as u8])?;
         Ok(Self::SerializeMap {
             ser: self,
             key: None,
@@ -122,10 +126,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        Ok(Self::SerializeStruct {
-            ser: self,
-            key: None,
-        })
+        self.serialize_map(None)
     }
 }
 
