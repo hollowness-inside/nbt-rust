@@ -1,5 +1,6 @@
 use crate::error::{Error, Result};
 
+/// Macro to generate unsupported methods for the serde::Serializer trait.
 macro_rules! unsupported {
     ($name:ident) => {
         fn $name(self) -> Result<()> {
@@ -22,6 +23,9 @@ macro_rules! unsupported {
 
 pub(crate) use unsupported;
 
+/// A struct that implements all the required type fields for the
+/// `serde::Serializer` trait, but returns `Error::UnsupportedMethod`
+/// for all methods.
 pub struct Unsupported;
 
 impl serde::ser::SerializeSeq for Unsupported {

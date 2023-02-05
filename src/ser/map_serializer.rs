@@ -8,8 +8,12 @@ use super::{
     key_serializer::KeySerializer, serializer::Serializer, value_serializer::ValueSerializer,
 };
 
+/// A serializer for the map data structure
 pub struct MapSerializer<'a, W> {
+    /// The underlying serializer
     pub(super) ser: &'a mut Serializer<W>,
+
+    /// The key of the current map entry
     pub(super) key: Option<Vec<u8>>,
 }
 

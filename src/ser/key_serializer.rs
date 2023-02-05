@@ -5,20 +5,20 @@ use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
 
+/// A serializer that serializes a map key into a byte stream.
+/// 
+/// This serializer is only used by `MapSerializer` to serialize
+/// map keys and make sure those are bytes.
 pub(crate) struct KeySerializer<W> {
     pub(crate) ser: W,
-}
-
-impl<W> KeySerializer<W> {
-    pub fn new(writer: W) -> Self {
-        KeySerializer { ser: writer }
-    }
 }
 
 impl<'a, W: io::Write> Serializer for &'a mut KeySerializer<W> {
     type Ok = ();
     type Error = Error;
 
+    /// We only need to serialize strings and bytes, so all these
+    /// methods are not necessary and marked as unsupported.
     type SerializeSeq = Unsupported;
     type SerializeTuple = Unsupported;
     type SerializeTupleStruct = Unsupported;
