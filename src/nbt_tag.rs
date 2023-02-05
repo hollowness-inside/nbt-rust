@@ -5,6 +5,23 @@ use std::{
 
 use crate::error::Error;
 
+macro_rules! impl_from {
+    ($from:ty, $var:ident) => {
+        impl From<$from> for NbtTag {
+            fn from(v: $from) -> Self {
+                NbtTag::$var(v)
+            }
+        }
+    };
+    ($from:ty as $v:ty, $var:ident) => {
+        impl From<$from> for NbtTag {
+            fn from(v: $from) -> Self {
+                NbtTag::$var(v as $v)
+            }
+        }
+    };
+}
+
 /// In the binary format, each tag is prefixed with a single byte
 /// which identifies its type. The tag prefixes are listed below.
 #[derive(Clone, Copy, PartialEq)]
@@ -152,111 +169,26 @@ impl fmt::Display for NbtTag {
     }
 }
 
-impl From<u8> for NbtTag {
-    fn from(v: u8) -> Self {
-        NbtTag::Byte(v)
-    }
-}
-
-impl From<i8> for NbtTag {
-    fn from(v: i8) -> Self {
-        NbtTag::Byte(v as u8)
-    }
-}
-
-impl From<i16> for NbtTag {
-    fn from(v: i16) -> Self {
-        NbtTag::Short(v)
-    }
-}
-
-impl From<u16> for NbtTag {
-    fn from(v: u16) -> Self {
-        NbtTag::Short(v as i16)
-    }
-}
-
-impl From<i32> for NbtTag {
-    fn from(v: i32) -> Self {
-        NbtTag::Int(v)
-    }
-}
-
-impl From<u32> for NbtTag {
-    fn from(v: u32) -> Self {
-        NbtTag::Int(v as i32)
-    }
-}
-
-impl From<i64> for NbtTag {
-    fn from(v: i64) -> Self {
-        NbtTag::Long(v)
-    }
-}
-
-impl From<u64> for NbtTag {
-    fn from(v: u64) -> Self {
-        NbtTag::Long(v as i64)
-    }
-}
-
-impl From<f32> for NbtTag {
-    fn from(v: f32) -> Self {
-        NbtTag::Float(v)
-    }
-}
-
-impl From<f64> for NbtTag {
-    fn from(v: f64) -> Self {
-        NbtTag::Double(v)
-    }
-}
-
-impl From<Vec<u8>> for NbtTag {
-    fn from(v: Vec<u8>) -> Self {
-        NbtTag::ByteArray(v)
-    }
-}
-
-impl From<String> for NbtTag {
-    fn from(v: String) -> Self {
-        NbtTag::String(v)
-    }
-}
-
-impl From<Vec<NbtTag>> for NbtTag {
-    fn from(v: Vec<NbtTag>) -> Self {
-        NbtTag::List(v)
-    }
-}
+impl_from!(u8, Byte);
+impl_from!(i8 as u8, Byte);
+impl_from!(i16, Short);
+impl_from!(u16 as i16, Short);
+impl_from!(i32, Int);
+impl_from!(u32 as i32, Int);
+impl_from!(i64, Long);
+impl_from!(u64 as i64, Long);
+impl_from!(f32, Float);
+impl_from!(f64, Double);
+impl_from!(Vec<u8>, ByteArray);
+impl_from!(String, String);
+impl_from!(Vec<NbtTag>, List);
+impl_from!(HashMap<String, NbtTag>, Compound);
+impl_from!(Vec<i32>, IntArray);
+impl_from!(Vec<i64>, LongArray);
 
 impl From<Vec<(String, NbtTag)>> for NbtTag {
     fn from(v: Vec<(String, NbtTag)>) -> Self {
         let h: HashMap<String, NbtTag> = v.into_iter().collect();
         NbtTag::Compound(h)
-    }
-}
-
-impl From<HashMap<String, NbtTag>> for NbtTag {
-    fn from(v: HashMap<String, NbtTag>) -> Self {
-        NbtTag::Compound(v)
-    }
-}
-
-impl From<Vec<i32>> for NbtTag {
-    fn from(v: Vec<i32>) -> Self {
-        NbtTag::IntArray(v)
-    }
-}
-
-impl From<Vec<i64>> for NbtTag {
-    fn from(v: Vec<i64>) -> Self {
-        NbtTag::LongArray(v)
-    }
-}
-
-impl From<()> for NbtTag {
-    fn from(_: ()) -> Self {
-        NbtTag::End
     }
 }
