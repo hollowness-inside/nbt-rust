@@ -101,7 +101,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
 
     fn serialize_str(self, v: &str) -> Result<()> {
         let mut data = make_header(TagType::String, &self.name.clone());
-        data.extend((v.len() as i16).to_be_bytes());
+        data.extend((v.len() as u16).to_be_bytes());
         data.extend(v.as_bytes());
         self.ser.0.write_all(&data)?;
         Ok(())
