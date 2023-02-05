@@ -5,7 +5,7 @@ use serde::ser;
 use crate::error::{Error, Result};
 
 use super::{
-    name_serializer::NameSerializer, serializer::Serializer, value_serializer::ValueSerializer,
+    key_serializer::KeySerializer, serializer::Serializer, value_serializer::ValueSerializer,
 };
 
 pub struct MapSerializer<'a, W> {
@@ -22,7 +22,7 @@ impl<'a, W: io::Write> ser::SerializeMap for MapSerializer<'a, W> {
         T: serde::Serialize,
     {
         let mut name = Vec::new();
-        key.serialize(&mut NameSerializer { ser: &mut name })?;
+        key.serialize(&mut KeySerializer { ser: &mut name })?;
         self.key = Some(name);
 
         Ok(())

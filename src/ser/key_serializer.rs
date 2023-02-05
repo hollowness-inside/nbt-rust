@@ -5,17 +5,17 @@ use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
 
-pub struct NameSerializer<W> {
+pub struct KeySerializer<W> {
     pub(crate) ser: W,
 }
 
-impl<W> NameSerializer<W> {
+impl<W> KeySerializer<W> {
     pub fn new(writer: W) -> Self {
-        NameSerializer { ser: writer }
+        KeySerializer { ser: writer }
     }
 }
 
-impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
+impl<'a, W: io::Write> Serializer for &'a mut KeySerializer<W> {
     type Ok = ();
     type Error = Error;
 
@@ -83,19 +83,19 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         T: serde::Serialize,
     {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_newtype_variant".to_string(),
+            "KeySerializer::serialize_newtype_variant".to_string(),
         ))
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_seq".to_string(),
+            "KeySerializer::serialize_seq".to_string(),
         ))
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_tuple".to_string(),
+            "KeySerializer::serialize_tuple".to_string(),
         ))
     }
 
@@ -105,7 +105,7 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_tuple_struct".to_string(),
+            "KeySerializer::serialize_tuple_struct".to_string(),
         ))
     }
 
@@ -117,19 +117,19 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_tuple_variant".to_string(),
+            "KeySerializer::serialize_tuple_variant".to_string(),
         ))
     }
 
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_map".to_string(),
+            "KeySerializer::serialize_map".to_string(),
         ))
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_struct".to_string(),
+            "KeySerializer::serialize_struct".to_string(),
         ))
     }
 
@@ -141,7 +141,7 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
         Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_struct_variant".to_string(),
+            "KeySerializer::serialize_struct_variant".to_string(),
         ))
     }
 }

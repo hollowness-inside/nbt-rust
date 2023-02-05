@@ -1,5 +1,5 @@
+pub mod key_serializer;
 pub mod map_serializer;
-pub mod name_serializer;
 pub mod serializer;
 pub mod unsupported;
 pub mod value_serializer;

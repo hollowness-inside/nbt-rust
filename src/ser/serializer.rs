@@ -25,6 +25,25 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type SerializeStruct = MapSerializer<'a, W>;
     type SerializeStructVariant = MapSerializer<'a, W>;
 
+    fn serialize_newtype_struct<T: ?Sized>(self, _: &'static str, value: &T) -> Result<()>
+    where
+        T: serde::Serialize,
+    {
+        value.serialize(self)
+    }
+
+    fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
+        self.0.write_all(&[TagType::Compound as u8])?;
+        Ok(Self::SerializeMap {
+            ser: self,
+            key: None,
+        })
+    }
+
+    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
+        self.serialize_map(None)
+    }
+
     unsupported!(serialize_bool, bool);
     unsupported!(serialize_i8, i8);
     unsupported!(serialize_i16, i16);
@@ -112,25 +131,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
         Err(Error::UnsupportedMethod(
             "Serializer::serialize_tuple_variant".to_string(),
         ))
-    }
-
-    fn serialize_newtype_struct<T: ?Sized>(self, _: &'static str, value: &T) -> Result<()>
-    where
-        T: serde::Serialize,
-    {
-        value.serialize(self)
-    }
-
-    fn serialize_map(self, _: Option<usize>) -> Result<Self::SerializeMap> {
-        self.0.write_all(&[TagType::Compound as u8])?;
-        Ok(Self::SerializeMap {
-            ser: self,
-            key: None,
-        })
-    }
-
-    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
-        self.serialize_map(None)
     }
 }
 
