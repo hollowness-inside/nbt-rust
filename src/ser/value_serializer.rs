@@ -27,71 +27,85 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     type SerializeStructVariant = MapSerializer<'a, W>;
 
     fn serialize_bool(self, v: bool) -> Result<()> {
+        self.write_header(TagType::Byte, &self.name.clone())?;
         self.write_byte(if v { 1 } else { 0 })?;
         Ok(())
     }
 
     fn serialize_i8(self, v: i8) -> Result<()> {
+        self.write_header(TagType::Byte, &self.name.clone())?;
         self.write_byte(v as u8)?;
         Ok(())
     }
 
     fn serialize_i16(self, v: i16) -> Result<()> {
+        self.write_header(TagType::Short, &self.name.clone())?;
         self.write_short(v)?;
         Ok(())
     }
 
     fn serialize_i32(self, v: i32) -> Result<()> {
+        self.write_header(TagType::Int, &self.name.clone())?;
         self.write_int(v)?;
         Ok(())
     }
 
     fn serialize_i64(self, v: i64) -> Result<()> {
+        self.write_header(TagType::Long, &self.name.clone())?;
         self.write_long(v)?;
         Ok(())
     }
 
     fn serialize_u8(self, v: u8) -> Result<()> {
+        self.write_header(TagType::Byte, &self.name.clone())?;
         self.write_byte(v)?;
         Ok(())
     }
 
     fn serialize_u16(self, v: u16) -> Result<()> {
+        self.write_header(TagType::Short, &self.name.clone())?;
         self.write_short(v as i16)?;
         Ok(())
     }
 
     fn serialize_u32(self, v: u32) -> Result<()> {
+        self.write_header(TagType::Int, &self.name.clone())?;
         self.write_int(v as i32)?;
         Ok(())
     }
 
     fn serialize_u64(self, v: u64) -> Result<()> {
+        self.write_header(TagType::Long, &self.name.clone())?;
         self.write_long(v as i64)?;
         Ok(())
     }
 
     fn serialize_f32(self, v: f32) -> Result<()> {
+        self.write_header(TagType::Float, &self.name.clone())?;
         self.write_float(v)?;
         Ok(())
     }
 
     fn serialize_f64(self, v: f64) -> Result<()> {
+        self.write_header(TagType::Double, &self.name.clone())?;
         self.write_double(v)?;
         Ok(())
     }
 
     fn serialize_char(self, v: char) -> Result<()> {
+        self.write_header(TagType::Byte, &self.name.clone())?;
         self.write_byte(v as u8)?;
         Ok(())
     }
 
     fn serialize_str(self, v: &str) -> Result<()> {
+        self.write_header(TagType::String, &self.name.clone())?;
         self.write_string(v)?;
         Ok(())
     }
 
     fn serialize_bytes(self, v: &[u8]) -> Result<()> {
+        self.write_header(TagType::ByteArray, &self.name.clone())?;
         self.write_byte_array(v)?;
         Ok(())
     }
@@ -175,6 +189,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     }
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
+        self.write_header(TagType::Compound, &self.name.clone())?;
         Ok(MapSerializer {
             ser: self.ser,
             key: None,
@@ -196,10 +211,10 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
 impl<'a, W: io::Write> ValueSerializer<'a, W> {
     /// Writes a header to the provided tag
     #[inline]
-    fn write_header(&mut self, tag_type: TagType, name: &str) -> Result<()> {
+    fn write_header(&mut self, tag_type: TagType, name: &[u8]) -> Result<()> {
         let mut res = vec![tag_type as u8];
         res.extend((name.len() as i16).to_be_bytes());
-        res.extend(name.as_bytes());
+        res.extend(name);
         self.ser.0.write_all(&res)?;
 
         Ok(())
@@ -374,7 +389,7 @@ impl<'a, W: io::Write> ValueSerializer<'a, W> {
     /// Headless version of serialize_compound()
     fn write_compound(&mut self, v: &HashMap<String, NbtTag>) -> Result<()> {
         for (name, tag) in v {
-            self.write_header(tag.tag_type(), name)?;
+            self.write_header(tag.tag_type(), name.as_bytes())?;
             self.write_tag(tag.clone())?;
         }
         self.ser.0.write_all(&[TagType::End as u8])?;
