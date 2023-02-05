@@ -1,14 +1,18 @@
-pub mod key_serializer;
-pub mod map_serializer;
-pub mod serializer;
-pub mod unsupported;
-pub mod value_serializer;
+mod key_serializer;
+mod map_serializer;
+mod serializer;
+mod unsupported;
+mod value_serializer;
+
+pub use self::unsupported::Unsupported;
+pub use self::map_serializer::MapSerializer;
+pub use self::serializer::Serializer;
+pub use self::value_serializer::ValueSerializer;
+
+use crate::error::Result;
 
 use serde::Serialize;
 use std::io;
-
-use self::serializer::Serializer;
-use crate::error::Result;
 
 /// Serialize a value into a byte stream and write it to the given writer.
 ///
