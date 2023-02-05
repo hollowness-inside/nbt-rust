@@ -1,5 +1,20 @@
 use crate::error::{Error, Result};
 
+macro_rules! unsupported {
+    ($name:ident) => {
+        fn $name(self) -> Result<()> {
+            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+        }
+    };
+    ($name:ident, $($types:ty),*) => {
+        fn $name(self, $(_: $types),*) -> Result<()> {
+            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+        }
+    };
+}
+
+pub(crate) use unsupported;
+
 pub struct Unsupported;
 
 impl serde::ser::SerializeSeq for Unsupported {

@@ -5,20 +5,7 @@ use crate::{
     nbt_tag::TagType,
 };
 
-use super::{map_serializer::MapSerializer, unsupported::Unsupported};
-
-macro_rules! unsupported {
-    ($name:ident) => {
-        fn $name(self) -> Result<()> {
-            Err(Error::UnsupportedMethod(format!("Serializer::{}", stringify!($name))))
-        }
-    };
-    ($name:ident, $($types:ty),*) => {
-        fn $name(self, $(_: $types),*) -> Result<()> {
-            Err(Error::UnsupportedMethod(format!("Serializer::{}", stringify!($name))))
-        }
-    };
-}
+use super::{map_serializer::MapSerializer, unsupported::{Unsupported, unsupported}};
 
 pub struct Serializer<W>(pub(crate) W);
 
