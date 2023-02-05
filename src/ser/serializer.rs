@@ -5,7 +5,10 @@ use crate::{
     nbt_tag::TagType,
 };
 
-use super::{map_serializer::MapSerializer, unsupported::{Unsupported, unsupported}};
+use super::{
+    map_serializer::MapSerializer,
+    unsupported::{unsupported, Unsupported},
+};
 
 pub struct Serializer<W>(pub(crate) W);
 

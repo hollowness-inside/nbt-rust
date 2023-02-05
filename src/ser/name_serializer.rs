@@ -1,6 +1,6 @@
 use std::io;
 
-use super::unsupported::Unsupported;
+use super::unsupported::{unsupported, Unsupported};
 use crate::error::{Error, Result};
 
 use serde::ser::Serializer;
@@ -27,72 +27,6 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
     type SerializeStruct = Unsupported;
     type SerializeStructVariant = Unsupported;
 
-    fn serialize_bool(self, _v: bool) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_bool".to_string(),
-        ))
-    }
-
-    fn serialize_i8(self, _v: i8) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_i8".to_string(),
-        ))
-    }
-
-    fn serialize_i16(self, _v: i16) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_i16".to_string(),
-        ))
-    }
-
-    fn serialize_i32(self, _v: i32) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_i32".to_string(),
-        ))
-    }
-
-    fn serialize_i64(self, _v: i64) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_i64".to_string(),
-        ))
-    }
-
-    fn serialize_u8(self, _v: u8) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_u8".to_string(),
-        ))
-    }
-
-    fn serialize_u16(self, _v: u16) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_u16".to_string(),
-        ))
-    }
-
-    fn serialize_u32(self, _v: u32) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_u32".to_string(),
-        ))
-    }
-
-    fn serialize_u64(self, _v: u64) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_u64".to_string(),
-        ))
-    }
-
-    fn serialize_f32(self, _v: f32) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_f32".to_string(),
-        ))
-    }
-
-    fn serialize_f64(self, _v: f64) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_f64".to_string(),
-        ))
-    }
-
     fn serialize_char(self, v: char) -> Result<()> {
         self.ser.write_all(&[v as u8])?;
         Ok(())
@@ -108,39 +42,11 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
         Ok(())
     }
 
-    fn serialize_none(self) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_none".to_string(),
-        ))
-    }
-
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
         value.serialize(self)
-    }
-
-    fn serialize_unit(self) -> Result<()> {
-        self.ser.write_all(&[0, 0])?;
-        Ok(())
-    }
-
-    fn serialize_unit_struct(self, _name: &'static str) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_unit_struct".to_string(),
-        ))
-    }
-
-    fn serialize_unit_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-    ) -> Result<()> {
-        Err(Error::UnsupportedMethod(
-            "NameSerializer::serialize_unit_variant".to_string(),
-        ))
     }
 
     fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, value: &T) -> Result<()>
@@ -149,6 +55,22 @@ impl<'a, W: io::Write> Serializer for &'a mut NameSerializer<W> {
     {
         value.serialize(self)
     }
+
+    unsupported!(serialize_bool, bool);
+    unsupported!(serialize_i8, i8);
+    unsupported!(serialize_i16, i16);
+    unsupported!(serialize_i32, i32);
+    unsupported!(serialize_i64, i64);
+    unsupported!(serialize_u8, u8);
+    unsupported!(serialize_u16, u16);
+    unsupported!(serialize_u32, u32);
+    unsupported!(serialize_u64, u64);
+    unsupported!(serialize_f32, f32);
+    unsupported!(serialize_f64, f64);
+    unsupported!(serialize_none);
+    unsupported!(serialize_unit_struct, &'static str);
+    unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
+    unsupported!(serialize_unit);
 
     fn serialize_newtype_variant<T: ?Sized>(
         self,
