@@ -111,22 +111,22 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     }
 
     fn serialize_none(self) -> Result<()> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
-    fn serialize_some<T: ?Sized>(self, _value: &T) -> Result<()>
+    fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        todo!()
+        value.serialize(self)
     }
 
     fn serialize_unit(self) -> Result<()> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_unit_struct(self, _name: &'static str) -> Result<()> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_unit_variant(
@@ -135,14 +135,14 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _variant_index: u32,
         _variant: &'static str,
     ) -> Result<()> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
-    fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, _value: &T) -> Result<()>
+    fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        todo!()
+        value.serialize(self)
     }
 
     fn serialize_newtype_variant<T: ?Sized>(
@@ -155,15 +155,15 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     where
         T: serde::Serialize,
     {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_tuple_struct(
@@ -171,7 +171,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_tuple_variant(
@@ -181,19 +181,19 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
-        todo!()
+        Err(Error::Unsupported)
     }
 
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
-        todo!()
-    }
-
-    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
         self.write_header(TagType::Compound, &self.name.clone())?;
         Ok(MapSerializer {
             ser: self.ser,
             key: None,
         })
+    }
+
+    fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
+        self.serialize_map(None)
     }
 
     fn serialize_struct_variant(
