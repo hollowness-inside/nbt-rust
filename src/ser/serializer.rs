@@ -7,7 +7,7 @@ use crate::{
 
 use super::{map_serializer::MapSerializer, unsupported::Unsupported};
 
-macro_rules! no_name {
+macro_rules! unsupported {
     ($name:ident) => {
         fn $name(self) -> Result<()> {
             Err(Error::UnsupportedMethod(format!("Serializer::{}", stringify!($name))))
@@ -35,24 +35,24 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     type SerializeStruct = MapSerializer<'a, W>;
     type SerializeStructVariant = MapSerializer<'a, W>;
 
-    no_name!(serialize_bool, bool);
-    no_name!(serialize_i8, i8);
-    no_name!(serialize_i16, i16);
-    no_name!(serialize_i32, i32);
-    no_name!(serialize_i64, i64);
-    no_name!(serialize_u8, u8);
-    no_name!(serialize_u16, u16);
-    no_name!(serialize_u32, u32);
-    no_name!(serialize_u64, u64);
-    no_name!(serialize_f32, f32);
-    no_name!(serialize_f64, f64);
-    no_name!(serialize_char, char);
-    no_name!(serialize_str, &str);
-    no_name!(serialize_bytes, &[u8]);
-    no_name!(serialize_none);
-    no_name!(serialize_unit_variant, &'static str, u32, &'static str);
-    no_name!(serialize_unit);
-    no_name!(serialize_unit_struct, &'static str);
+    unsupported!(serialize_bool, bool);
+    unsupported!(serialize_i8, i8);
+    unsupported!(serialize_i16, i16);
+    unsupported!(serialize_i32, i32);
+    unsupported!(serialize_i64, i64);
+    unsupported!(serialize_u8, u8);
+    unsupported!(serialize_u16, u16);
+    unsupported!(serialize_u32, u32);
+    unsupported!(serialize_u64, u64);
+    unsupported!(serialize_f32, f32);
+    unsupported!(serialize_f64, f64);
+    unsupported!(serialize_char, char);
+    unsupported!(serialize_str, &str);
+    unsupported!(serialize_bytes, &[u8]);
+    unsupported!(serialize_none);
+    unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
+    unsupported!(serialize_unit);
+    unsupported!(serialize_unit_struct, &'static str);
 
     fn serialize_seq(self, _: Option<usize>) -> Result<Self::SerializeSeq> {
         Err(Error::UnsupportedMethod(
