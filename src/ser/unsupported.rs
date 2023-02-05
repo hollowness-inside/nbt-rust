@@ -10,11 +10,11 @@ impl serde::ser::SerializeSeq for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -26,11 +26,11 @@ impl serde::ser::SerializeTuple for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -42,11 +42,11 @@ impl serde::ser::SerializeTupleStruct for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -58,11 +58,11 @@ impl serde::ser::SerializeTupleVariant for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -74,18 +74,18 @@ impl serde::ser::SerializeMap for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -97,11 +97,11 @@ impl serde::ser::SerializeStruct for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
 
@@ -113,10 +113,10 @@ impl serde::ser::SerializeStructVariant for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }

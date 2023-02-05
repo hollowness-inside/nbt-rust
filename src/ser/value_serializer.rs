@@ -116,7 +116,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     }
 
     fn serialize_none(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<()>
@@ -127,11 +127,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     }
 
     fn serialize_unit(self) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_unit_struct(self, _name: &'static str) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_unit_variant(
@@ -140,7 +140,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _variant_index: u32,
         _variant: &'static str,
     ) -> Result<()> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_newtype_struct<T: ?Sized>(self, _name: &'static str, value: &T) -> Result<()>
@@ -160,15 +160,15 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_tuple_struct(
@@ -176,7 +176,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _name: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_tuple_variant(
@@ -186,7 +186,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 
     fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap> {
@@ -210,6 +210,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
         _variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::Unsupported)
+        Err(Error::UnsupportedMethod)
     }
 }
