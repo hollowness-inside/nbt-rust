@@ -21,8 +21,12 @@ fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
     res
 }
 
+/// A serializer that writes a single NBT Tag i.e. its name and value.
 pub struct ValueSerializer<'a, W> {
+    /// The underlying writer.
     pub(crate) ser: &'a mut Serializer<W>,
+
+    /// The name of the tag that is being serialized.
     pub(crate) name: Vec<u8>,
 }
 
