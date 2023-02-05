@@ -11,7 +11,7 @@ use super::{
     unsupported::{unsupported, Unsupported},
 };
 
-/// Creates a byte vector that represents the header of an NBT tag 
+/// Creates a byte vector that represents the header of an NBT tag
 /// with the given name and type and returns it.
 #[inline]
 fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
@@ -43,40 +43,11 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     unsupported!(serialize_unit);
     unsupported!(serialize_unit_struct, &'static str);
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
-
-    fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq> {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_seq".to_string(),
-        ))
-    }
-
-    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple> {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_tuple".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_struct(
-        self,
-        _name: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeTupleStruct> {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_tuple_struct".to_string(),
-        ))
-    }
-
-    fn serialize_tuple_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeTupleVariant> {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_tuple_variant".to_string(),
-        ))
-    }
+    unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
+    unsupported!(serialize_tuple -> SerializeTuple, usize);
+    unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
+    unsupported!(serialize_tuple_variant -> SerializeTupleVariant, &'static str, u32, &'static str, usize);
+    unsupported!(serialize_struct_variant -> SerializeStructVariant, &'static str, u32, &'static str, usize);
 
     fn serialize_newtype_variant<T: ?Sized>(
         self,
@@ -90,18 +61,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     {
         Err(Error::UnsupportedMethod(
             "ValueSerializer::serialize_newtype_variant".to_string(),
-        ))
-    }
-
-    fn serialize_struct_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-        _len: usize,
-    ) -> Result<Self::SerializeStructVariant> {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_struct_variant".to_string(),
         ))
     }
 
