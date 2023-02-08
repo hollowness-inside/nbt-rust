@@ -359,10 +359,8 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
         todo!()
     }
 
-    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value>
-    where
-        V: de::Visitor<'de>,
-    {
-        todo!()
-    }
+pub fn from_reader<R: io::Read>(reader: R) -> Result<(String, NbtTag)> {
+    let mut deserializer = Deserializer::from_reader(reader);
+    let value = deserializer.get_next_value()?;
+    Ok(value)
 }
