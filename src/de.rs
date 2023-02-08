@@ -17,7 +17,7 @@ impl<R: io::Read> Deserializer<R> {
             return Ok(("".to_string(), NbtTag::End));
         }
 
-        let mut name = vec![0; self.read_i16()];
+        let mut name = vec![0; self.read_i16()? as usize];
         self.reader.read_exact(&mut name)?;
         let name = String::from_utf8(name)?;
 
