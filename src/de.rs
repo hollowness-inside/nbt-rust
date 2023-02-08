@@ -35,6 +35,14 @@ where
     T::deserialize(&mut deserializer)
 }
 
+impl<R: io::Read> Deserializer<'_, R> {
+    fn read_u8(&mut self) -> Result<u8> {
+        let mut byte = [0u8; 1];
+        self.input.read_exact(&mut byte)?;
+        Ok(byte[0])
+    }
+}
+
 /// Reads a single NBT tag from a reader
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<(String, NbtTag)> {
     let (prefix, name) = read_tag_header(reader)?;
