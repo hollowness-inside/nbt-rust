@@ -24,6 +24,12 @@ where
             peek: None,
         }
     }
+
+    fn read_u8(&mut self) -> Result<u8> {
+        let mut byte = [0u8; 1];
+        self.input.read_exact(&mut byte)?;
+        Ok(byte[0])
+    }
 }
 
 pub fn from_reader<'a, R, T>(reader: &'a R) -> Result<T>
@@ -33,14 +39,6 @@ where
 {
     let mut deserializer = Deserializer::from_reader(reader);
     T::deserialize(&mut deserializer)
-}
-
-impl<R: io::Read> Deserializer<'_, R> {
-    fn read_u8(&mut self) -> Result<u8> {
-        let mut byte = [0u8; 1];
-        self.input.read_exact(&mut byte)?;
-        Ok(byte[0])
-    }
 }
 
 impl<'de, 'a, R> serde::de::Deserializer<'de> for &'a mut Deserializer<'de, R>
