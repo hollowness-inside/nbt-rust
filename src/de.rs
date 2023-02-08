@@ -53,6 +53,21 @@ where
     where
         V: serde::de::Visitor<'de>,
     {
+        match self.read_u8()?.try_into()? {
+            TagType::End => todo!(),
+            TagType::Byte => self.deserialize_bool(visitor),
+            TagType::Short => self.deserialize_i16(visitor),
+            TagType::Int => self.deserialize_i32(visitor),
+            TagType::Long => self.deserialize_i64(visitor),
+            TagType::Float => self.deserialize_f32(visitor),
+            TagType::Double => self.deserialize_f64(visitor),
+            TagType::ByteArray => self.deserialize_bytes(visitor),
+            TagType::String => self.deserialize_str(visitor),
+            TagType::List => self.deserialize_seq(visitor),
+            TagType::Compound => self.deserialize_map(visitor),
+            TagType::IntArray => self.deserialize_seq(visitor),
+            TagType::LongArray => self.deserialize_seq(visitor),
+        }
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value>
