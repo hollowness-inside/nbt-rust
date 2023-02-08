@@ -18,9 +18,10 @@ impl<R: io::Read> Deserializer<R> {
         }
 
         let mut name = vec![0; self.read_i16()];
-        self.reader.read_exact(&mut name);
-        let name = String::from_utf8(name).unwrap();
+        self.reader.read_exact(&mut name)?;
+        let name = String::from_utf8(name)?;
 
+        let tag: TagType = match tt {
         let tag = match tt {
             TagType::End => NbtTag::End,
             TagType::Byte => self.read_u8()?,
@@ -35,6 +36,7 @@ impl<R: io::Read> Deserializer<R> {
             TagType::Compound => self.read_compound()?,
             TagType::IntArray => self.read_int_array()?,
             TagType::LongArray => self.read_long_array()?,
+            TagType::End => unreachable!(),
         };
 
         Ok((name, tag))
