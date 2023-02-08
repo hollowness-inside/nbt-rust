@@ -3,7 +3,37 @@ use std::{
     io::{Cursor, Read},
 };
 
-use crate::{error::Result, nbt_tag::TagType, NbtTag};
+use crate::{
+    error::{Error, Result},
+    nbt_tag::TagType,
+    NbtTag,
+};
+
+pub struct Deserializer<'de, R> {
+    input: &'de R,
+    peek: Option<u8>,
+}
+
+impl<'de, R> Deserializer<'de, R>
+where
+    R: io::Read,
+{
+    pub fn from_reader(reader: &'de R) -> Self {
+        Self {
+            input: reader,
+            peek: None,
+        }
+    }
+}
+
+pub fn from_reader<'a, R, T>(reader: &'a R) -> Result<T>
+where
+    R: io::Read,
+    T: serde::Deserialize<'a>,
+{
+    let mut deserializer = Deserializer::from_reader(reader);
+    T::deserialize(&mut deserializer)
+}
 
 /// Reads a single NBT tag from a reader
 pub fn from_reader<R: Read>(reader: &mut R) -> Result<(String, NbtTag)> {
