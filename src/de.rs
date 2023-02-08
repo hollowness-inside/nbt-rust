@@ -30,6 +30,13 @@ where
         self.input.read_exact(&mut byte)?;
         Ok(byte[0])
     }
+
+    fn read_i16(&mut self) -> Result<i16> {
+        let mut short = [0; 2];
+        self.input.read_exact(&mut short)?;
+
+        Ok(i16::from_be_bytes(short))
+    }
 }
 
 pub fn from_reader<'a, R, T>(reader: &'a R) -> Result<T>
@@ -86,7 +93,7 @@ where
     where
         V: serde::de::Visitor<'de>,
     {
-        todo!()
+        visitor.visit_i16(self.read_i16()?)
     }
 
     fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value>
