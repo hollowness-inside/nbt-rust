@@ -97,7 +97,7 @@ impl<R: io::Read> Deserializer<R> {
     }
 
     fn read_list(&mut self) -> Result<NbtTag> {
-        let tt: TagType = self.read_u8()?.try_into()?;
+        let _tt: TagType = self.read_u8()?.try_into()?;
         let len = self.read_i32()?;
         let mut list = Vec::with_capacity(len as usize);
         for _ in 0..len {
@@ -153,12 +153,12 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
             NbtTag::Long(v) => visitor.visit_i64(v),
             NbtTag::Float(v) => visitor.visit_f32(v),
             NbtTag::Double(v) => visitor.visit_f64(v),
-            NbtTag::ByteArray(v) => todo!(),
+            NbtTag::ByteArray(_v) => todo!(),
             NbtTag::String(v) => visitor.visit_string(v),
-            NbtTag::List(v) => todo!(),
-            NbtTag::Compound(v) => todo!(),
-            NbtTag::IntArray(v) => todo!(),
-            NbtTag::LongArray(v) => todo!(),
+            NbtTag::List(_v) => todo!(),
+            NbtTag::Compound(_v) => todo!(),
+            NbtTag::IntArray(_v) => todo!(),
+            NbtTag::LongArray(_v) => todo!(),
         }
     }
 
@@ -168,7 +168,7 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
         tuple ignored_any unit_struct
     }
 
-    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value>
+    fn deserialize_option<V>(self, _visitor: V) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
     {
@@ -177,8 +177,8 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
 
     fn deserialize_newtype_struct<V>(
         self,
-        name: &'static str,
-        visitor: V,
+        _name: &'static str,
+        _visitor: V,
     ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
@@ -188,9 +188,9 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
 
     fn deserialize_enum<V>(
         self,
-        name: &'static str,
-        variants: &'static [&'static str],
-        visitor: V,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        _visitor: V,
     ) -> Result<V::Value>
     where
         V: de::Visitor<'de>,
