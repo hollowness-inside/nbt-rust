@@ -130,8 +130,8 @@ impl<R: io::Read> Deserializer<R> {
     fn read_long_array(&mut self) -> Result<NbtTag> {
         let len = self.read_i32()? as usize;
         let mut buf = vec![0; len];
-        for i in 0..len {
-            buf[i] = self.read_i64()?;
+        for item in buf.iter_mut().take(len) {
+            *item = self.read_i64()?;
         }
         Ok(NbtTag::LongArray(buf))
     }
