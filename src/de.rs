@@ -144,14 +144,22 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
     where
         V: de::Visitor<'de>,
     {
-        todo!()
+        let value = self.get_next_value()?.1;
+        match value {
+            NbtTag::End => todo!(),
+            NbtTag::Byte(v) => visitor.visit_u8(v),
+            NbtTag::Short(v) => visitor.visit_i16(v),
+            NbtTag::Int(v) => visitor.visit_i32(v),
+            NbtTag::Long(v) => visitor.visit_i64(v),
+            NbtTag::Float(v) => visitor.visit_f32(v),
+            NbtTag::Double(v) => visitor.visit_f64(v),
+            NbtTag::ByteArray(v) => todo!(),
+            NbtTag::String(v) => visitor.visit_string(v),
+            NbtTag::List(v) => todo!(),
+            NbtTag::Compound(v) => todo!(),
+            NbtTag::IntArray(v) => todo!(),
+            NbtTag::LongArray(v) => todo!(),
     }
-
-    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value>
-    where
-        V: de::Visitor<'de>,
-    {
-        todo!()
     }
 
     fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value>
