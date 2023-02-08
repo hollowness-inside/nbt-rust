@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self, Cursor};
 
 use serde::de;
 
@@ -203,4 +203,10 @@ pub fn from_reader<R: io::Read>(reader: R) -> Result<(String, NbtTag)> {
     let mut deserializer = Deserializer::from_reader(reader);
     let value = deserializer.get_next_value()?;
     Ok(value)
+}
+
+#[inline]
+pub fn from_bytes(bytes: &[u8]) -> Result<(String, NbtTag)> {
+    let reader = Cursor::new(bytes);
+    from_reader(reader)
 }
