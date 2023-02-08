@@ -16,7 +16,7 @@ use super::{
 #[inline]
 fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
     let mut res = vec![tag_type as u8];
-    res.extend((name.len() as i16).to_be_bytes());
+    res.extend((name.len() as u16).to_be_bytes());
     res.extend(name);
     res
 }
