@@ -172,7 +172,7 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
     where
         V: de::Visitor<'de>,
     {
-        todo!()
+        unimplemented!()
     }
 
     fn deserialize_newtype_struct<V>(
@@ -183,7 +183,7 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
     where
         V: de::Visitor<'de>,
     {
-        todo!()
+        unimplemented!()
     }
 
     fn deserialize_enum<V>(
@@ -195,7 +195,7 @@ impl<'de, 'a, R: io::Read> de::Deserializer<'de> for &'a mut Deserializer<R> {
     where
         V: de::Visitor<'de>,
     {
-        todo!()
+        unimplemented!()
     }
 }
 
