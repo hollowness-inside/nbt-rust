@@ -63,9 +63,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod(
-            "ValueSerializer::serialize_newtype_variant".to_string(),
-        ))
+        unimplemented!("serialize_newtype_variant")
     }
 
     fn serialize_bool(self, v: bool) -> Result<()> {

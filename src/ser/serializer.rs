@@ -72,9 +72,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_some".to_string(),
-        ))
+        unimplemented!("Serializer::serialize_some")
     }
 
     fn serialize_newtype_variant<T: ?Sized>(
@@ -87,9 +85,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut Serializer<W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod(
-            "Serializer::serialize_newtype_variant".to_string(),
-        ))
+        unimplemented!("Serializer::serialize_newtype_variant")
     }
 }
 

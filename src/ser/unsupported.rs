@@ -4,19 +4,19 @@ use crate::error::{Error, Result};
 macro_rules! unsupported {
     ($name:ident) => {
         fn $name(self) -> Result<()> {
-            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+            unimplemented!("{}", stringify!($name))
         }
     };
 
     ($name:ident, $($types:ty),*) => {
         fn $name(self, $(_: $types),*) -> Result<()> {
-            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+            unimplemented!("{}", stringify!($name))
         }
     };
 
     ($name:ident -> $out:ident, $($types:ty),*) => {
         fn $name(self, $(_: $types),*) -> Result<Self::$out> {
-            Err(Error::UnsupportedMethod(format!("{}", stringify!($name))))
+            unimplemented!("{}", stringify!($name))
         }
     };
 }
@@ -32,15 +32,15 @@ impl serde::ser::SerializeSeq for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_element<T: ?Sized>(&mut self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -48,15 +48,15 @@ impl serde::ser::SerializeTuple for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_element<T: ?Sized>(&mut self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -64,15 +64,15 @@ impl serde::ser::SerializeTupleStruct for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -80,15 +80,15 @@ impl serde::ser::SerializeTupleVariant for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -100,18 +100,18 @@ impl serde::ser::SerializeMap for Unsupported {
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<()>
+    fn serialize_value<T: ?Sized>(&mut self, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -119,15 +119,15 @@ impl serde::ser::SerializeStruct for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }
 
@@ -135,14 +135,14 @@ impl serde::ser::SerializeStructVariant for Unsupported {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _value: &T) -> Result<()>
+    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, _: &T) -> Result<()>
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 
     fn end(self) -> Result<()> {
-        Err(Error::UnsupportedMethod("Unsupported".to_string()))
+        unimplemented!()
     }
 }

@@ -6,7 +6,7 @@ use crate::error::{Error, Result};
 use serde::ser::Serializer;
 
 /// A serializer that serializes a map key into a byte stream.
-/// 
+///
 /// This serializer is only used by `MapSerializer` to serialize
 /// map keys and make sure those are bytes.
 pub(crate) struct KeySerializer<W> {
@@ -89,8 +89,6 @@ impl<'a, W: io::Write> Serializer for &'a mut KeySerializer<W> {
     where
         T: serde::Serialize,
     {
-        Err(Error::UnsupportedMethod(
-            "KeySerializer::serialize_newtype_variant".to_string(),
-        ))
+        unimplemented!("KeySerializer::serialize_newtype_variant")
     }
 }
