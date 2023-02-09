@@ -4,9 +4,9 @@ mod serializer;
 mod unsupported;
 mod value_serializer;
 
-pub use self::unsupported::Unsupported;
 pub use self::map_serializer::MapSerializer;
 pub use self::serializer::Serializer;
+pub use self::unsupported::Unsupported;
 pub use self::value_serializer::ValueSerializer;
 
 use crate::error::Result;
