@@ -36,7 +36,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     type Error = Error;
 
     type SerializeSeq = SeqSerializer;
-    type SerializeTuple = Unsupported;
+    type SerializeTuple = SeqSerializer;
     type SerializeTupleStruct = Unsupported;
     type SerializeTupleVariant = Unsupported;
 
