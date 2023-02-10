@@ -1,10 +1,14 @@
 mod key_serializer;
 mod map_serializer;
-mod serializer;
-mod unsupported;
+mod seq_serializer;
 mod value_serializer;
 
+mod serializer;
+mod unsupported;
+
 pub use self::map_serializer::MapSerializer;
+pub use self::seq_serializer::ByteArraySerializer;
+pub use self::seq_serializer::SeqSerializer;
 pub use self::serializer::Serializer;
 pub use self::unsupported::Unsupported;
 pub use self::value_serializer::ValueSerializer;

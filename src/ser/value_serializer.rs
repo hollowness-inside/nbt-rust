@@ -9,6 +9,7 @@ use super::{
     map_serializer::MapSerializer,
     serializer::Serializer,
     unsupported::{unsupported, Unsupported},
+    SeqSerializer,
 };
 
 /// Creates a byte vector that represents the header of an NBT tag
@@ -34,7 +35,7 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = Unsupported;
+    type SerializeSeq = SeqSerializer;
     type SerializeTuple = Unsupported;
     type SerializeTupleStruct = Unsupported;
     type SerializeTupleVariant = Unsupported;
