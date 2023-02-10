@@ -6,10 +6,11 @@ use crate::{
 };
 
 use super::{
+    make_header,
     map_serializer::MapSerializer,
     serializer::Serializer,
     unsupported::{unsupported, Unsupported},
-    SeqSerializer, make_header,
+    SeqSerializer,
 };
 
 /// A serializer that writes a single NBT Tag i.e. its name and value.
