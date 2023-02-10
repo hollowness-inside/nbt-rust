@@ -1,19 +1,31 @@
-use serde::ser::SerializeSeq;
+use std::io;
 
-use crate::error::Error;
+use crate::{
+    error::{Error, Result},
+    ser::{unsupported::unsupported, Serializer, Unsupported},
+};
 
-pub struct ByteArraySerializer;
+pub struct ByteArraySerializer<'a, W> {
+    pub(crate) ser: &'a mut Serializer<W>,
+    pub(crate) len: usize,
+}
 
-impl SerializeSeq for ByteArraySerializer {
+impl<'a, W: io::Write> serde::ser::SerializeSeq for ByteArraySerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> Result<(), Self::Error>
+    fn serialize_element<T: ?Sized>(&mut self, value: &T) -> std::result::Result<(), Self::Error>
     where
         T: serde::Serialize,
     {
+        let mut out = Vec::new();
+        value.serialize(&mut ByteSerializer(&mut out))
+    }
+
+    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
         unimplemented!("Type of sequence must be specified")
     }
+}
 
 pub struct ByteSerializer<W>(W);
 
