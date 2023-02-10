@@ -9,18 +9,8 @@ use super::{
     map_serializer::MapSerializer,
     serializer::Serializer,
     unsupported::{unsupported, Unsupported},
-    SeqSerializer,
+    SeqSerializer, make_header,
 };
-
-/// Creates a byte vector that represents the header of an NBT tag
-/// with the given name and type and returns it.
-#[inline]
-fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
-    let mut res = vec![tag_type as u8];
-    res.extend((name.len() as u16).to_be_bytes());
-    res.extend(name);
-    res
-}
 
 /// A serializer that writes a single NBT Tag i.e. its name and value.
 pub struct ValueSerializer<'a, W> {

@@ -13,6 +13,7 @@ pub use self::unsupported::Unsupported;
 pub use self::value_serializer::ValueSerializer;
 
 use crate::error::Result;
+use crate::nbt_tag::TagType;
 
 use serde::Serialize;
 use std::io;
@@ -30,4 +31,14 @@ where
     let mut serializer = Serializer::new(writer);
     value.serialize(&mut serializer)?;
     Ok(())
+}
+
+/// Creates a byte vector that represents the header of an NBT tag
+/// with the given name and type and returns it.
+#[inline]
+pub(crate) fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
+    let mut res = vec![tag_type as u8];
+    res.extend((name.len() as u16).to_be_bytes());
+    res.extend(name);
+    res
 }
