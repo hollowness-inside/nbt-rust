@@ -25,8 +25,8 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq = SeqSerializer;
-    type SerializeTuple = SeqSerializer;
+    type SerializeSeq = SeqSerializer<'a, W>;
+    type SerializeTuple = SeqSerializer<'a, W>;
     type SerializeTupleStruct = Unsupported;
     type SerializeTupleVariant = Unsupported;
 
@@ -39,7 +39,6 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
     unsupported!(serialize_unit_struct, &'static str);
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
     unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
-    unsupported!(serialize_tuple -> SerializeTuple, usize);
     unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
     unsupported!(serialize_tuple_variant -> SerializeTupleVariant, &'static str, u32, &'static str, usize);
     unsupported!(serialize_struct_variant -> SerializeStructVariant, &'static str, u32, &'static str, usize);
@@ -165,5 +164,12 @@ impl<'a, W: io::Write> serde::Serializer for &'a mut ValueSerializer<'a, W> {
 
     fn serialize_struct(self, _name: &'static str, _len: usize) -> Result<Self::SerializeStruct> {
         self.serialize_map(None)
+    }
+
+    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple> {
+        Ok(Self::SerializeTuple {
+            ser: self.ser,
+            len: len,
+        })
     }
 }
