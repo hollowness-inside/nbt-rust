@@ -7,7 +7,6 @@ mod serializer;
 mod unsupported;
 
 pub use self::map_serializer::MapSerializer;
-pub use self::seq_serializer::ByteArraySerializer;
 pub use self::seq_serializer::SeqSerializer;
 pub use self::serializer::Serializer;
 pub use self::unsupported::Unsupported;

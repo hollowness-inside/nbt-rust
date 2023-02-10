@@ -2,17 +2,9 @@ use serde::ser::SerializeSeq;
 
 use crate::error::Error;
 
-pub struct SeqSerializer {
-    len: usize,
-}
+pub struct ByteArraySerializer;
 
-impl SeqSerializer {
-    pub fn as_byte_array(self) -> ByteArraySerializer {
-        ByteArraySerializer(self)
-    }
-}
-
-impl SerializeSeq for SeqSerializer {
+impl SerializeSeq for ByteArraySerializer {
     type Ok = ();
     type Error = Error;
 
@@ -20,12 +12,10 @@ impl SerializeSeq for SeqSerializer {
     where
         T: serde::Serialize,
     {
-        todo!()
+        unimplemented!("Type of sequence must be specified")
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        unimplemented!("Type of sequence must be specified")
     }
 }
-
-pub struct ByteArraySerializer(SeqSerializer);
