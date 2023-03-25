@@ -71,6 +71,11 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
     type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
     #[inline]
+    fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
+        self.serialize_u8(if v { 1 } else { 0 })
+    }
+
+    #[inline]
     fn serialize_i8(self, v: i8) -> Result<Self::Ok, Self::Error> {
         self.serialize_u8(v as u8)
     }
@@ -84,9 +89,11 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        #[cfg(not(feature="no_check"))]
-        if self.typ != TagType::IntArray && self.list_type != Some(TagType::Int) {
-            return Err(Error::WrongType);
+        #[cfg(not(feature = "no_check"))]
+        {
+            if self.typ != TagType::IntArray && self.list_type != Some(TagType::Int) {
+                return Err(Error::WrongType);
+            }
         }
 
         self.ser.0.write_all(&v.to_be_bytes())?;
@@ -103,9 +110,11 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        #[cfg(not(feature="no_check"))]
-        if self.typ != TagType::LongArray && self.list_type != Some(TagType::Long) {
-            return Err(Error::WrongType);
+        #[cfg(not(feature = "no_check"))]
+        {
+            if self.typ != TagType::LongArray && self.list_type != Some(TagType::Long) {
+                return Err(Error::WrongType);
+            }
         }
 
         self.ser.0.write_all(&v.to_be_bytes())?;
@@ -122,9 +131,11 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        #[cfg(not(feature="no_check"))]
-        if self.typ != TagType::ByteArray && self.list_type != Some(TagType::Byte) {
-            return Err(Error::WrongType);
+        #[cfg(not(feature = "no_check"))]
+        {
+            if self.typ != TagType::ByteArray && self.list_type != Some(TagType::Byte) {
+                return Err(Error::WrongType);
+            }
         }
 
         self.ser.0.write_all(&[v])?;
@@ -147,7 +158,6 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
         value.serialize(self)
     }
 
-    unsupported!(serialize_bool, bool);
     unsupported!(serialize_i16, i16);
     unsupported!(serialize_u16, u16);
     unsupported!(serialize_f32, f32);
