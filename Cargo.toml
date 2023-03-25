@@ -3,5 +3,8 @@ name = "nbt_rust"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+no_check = []
+
 [dependencies]
 serde = { version = "1.0.152", features = ["derive"] }
