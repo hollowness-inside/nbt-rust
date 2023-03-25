@@ -84,7 +84,8 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        if self.typ != TagType::Int && self.list_type != Some(TagType::Int) {
+        #[cfg(not(feature="no_check"))]
+        if self.typ != TagType::IntArray && self.list_type != Some(TagType::Int) {
             return Err(Error::WrongType);
         }
 
@@ -102,7 +103,8 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        if self.typ != TagType::Long && self.list_type != Some(TagType::Long) {
+        #[cfg(not(feature="no_check"))]
+        if self.typ != TagType::LongArray && self.list_type != Some(TagType::Long) {
             return Err(Error::WrongType);
         }
 
@@ -120,7 +122,8 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut SeqSerializer<'b, W> {
             self.ser.0.write_all(&buf)?;
         }
 
-        if self.typ != TagType::Byte && self.list_type != Some(TagType::Byte) {
+        #[cfg(not(feature="no_check"))]
+        if self.typ != TagType::ByteArray && self.list_type != Some(TagType::Byte) {
             return Err(Error::WrongType);
         }
 
