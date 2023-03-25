@@ -6,15 +6,9 @@ use serde::Serialize;
 
 use super::unsupported::unsupported;
 
-pub struct KeySerializer<'a>(&'a mut [u8]);
+pub struct KeySerializer<W>(pub(super) W);
 
-impl<'a> KeySerializer<'a> {
-    pub fn new(output: &'a mut [u8]) -> Self {
-        Self(output)
-    }
-}
-
-impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
+impl<'a, W: Write> serde::Serializer for &'a mut KeySerializer<W> {
     type Ok = ();
     type Error = Error;
 
@@ -27,7 +21,7 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
     type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
     fn serialize_bytes(self, v: &[u8]) -> std::result::Result<Self::Ok, Self::Error> {
-        self.0.write(v)?;
+        self.0.write_all(v)?;
         Ok(())
     }
 

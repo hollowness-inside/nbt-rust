@@ -20,7 +20,7 @@ impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
         T: Serialize,
     {
         let mut out = Vec::new();
-        key.serialize(&mut KeySerializer::new(&mut out))?;
+        key.serialize(&mut KeySerializer(&mut out))?;
 
         self.key = Some(out);
         Ok(())
@@ -31,11 +31,10 @@ impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
         T: Serialize,
     {
         if self.key.is_none() {
-            unimplemented!();
+            return Err(Error::MissingKey)
         }
 
         value.serialize(self)?;
-
         Ok(())
     }
 
