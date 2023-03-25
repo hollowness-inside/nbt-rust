@@ -1,5 +1,6 @@
 mod key_ser;
 mod map_ser;
+mod seq_ser;
 mod ser;
 mod unsupported;
 

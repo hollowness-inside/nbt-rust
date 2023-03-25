@@ -30,7 +30,7 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
         self.0.write(v)?;
         Ok(())
     }
-    
+
     #[inline]
     fn serialize_char(self, v: char) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_bytes(&[v as u8])

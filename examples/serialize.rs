@@ -1,4 +1,5 @@
 use nbt_rust::ser::to_writer;
+use serde::ser::SerializeTupleStruct;
 use std::io::Cursor;
 
 #[derive(serde::Serialize)]
@@ -12,7 +13,24 @@ struct GameData {
 struct Player {
     name: String,
     health: u32,
-    // position: NbtTag,
+    position: LongArray,
+}
+
+pub struct LongArray(Vec<i64>);
+
+impl serde::Serialize for LongArray {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut s = serializer.serialize_tuple_struct("LongArray", self.0.len())?;
+
+        for i in &self.0 {
+            s.serialize_field(i)?;
+        }
+
+        s.end()
+    }
 }
 
 fn main() {
@@ -25,7 +43,7 @@ fn main() {
         player: Player {
             name: "Player 1".to_string(),
             health: 100,
-            // position: NbtTag::LongArray(vec![1,2,3,4]),
+            position: LongArray(vec![1, 2, 3, 4]),
         },
     };
 

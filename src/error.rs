@@ -6,6 +6,7 @@ pub enum Error {
     Utf8(std::string::FromUtf8Error),
     Serde(String),
     UnknownTagType(u8),
+    WrongType,
     NoName,
     EmptySequence,
     ElementTypesDiffer,
@@ -51,6 +52,7 @@ impl fmt::Display for Error {
             Error::UnknownSize => write!(f, "Size must be specified"),
             Error::MissingKey => write!(f, "Missing key"),
             Error::Unsupported(name) => write!(f, "Unsupported method: {name}"),
+            Error::WrongType => f.write_str("Wrong Type"),
         }
     }
 }

@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::{error::Error, nbt_tag::TagType};
 
-use super::{key_ser::KeySerializer, unsupported::unsupported, Serializer};
+use super::{key_ser::KeySerializer, seq_ser::SeqSerializer, unsupported::unsupported, Serializer};
 
 pub struct MapSerializer<'a, W> {
     pub(super) ser: &'a mut Serializer<W>,
@@ -105,9 +105,9 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
 
     type SerializeSeq = serde::ser::Impossible<Self::Ok, Self::Error>;
     type SerializeTuple = serde::ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeTupleStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
     type SerializeTupleVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
+    type SerializeTupleStruct = SeqSerializer<'a, W>;
     type SerializeMap = MapSerializer<'a, W>;
     type SerializeStruct = MapSerializer<'a, W>;
     type SerializeStructVariant = MapSerializer<'a, W>;
@@ -225,7 +225,25 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     {
         todo!()
     }
-    
+
+    fn serialize_tuple_struct(
+        self,
+        name: &'static str,
+        len: usize,
+    ) -> std::result::Result<Self::SerializeTupleStruct, Self::Error> {
+        let ttype = match name {
+            "ByteArray" => TagType::ByteArray,
+            "IntArray" => TagType::IntArray,
+            "LongArray" => TagType::LongArray,
+            "List" => TagType::List,
+            _ => return Err(Error::WrongType),
+        };
+        let header = make_header(ttype, self.key.as_ref().unwrap());
+        self.ser.0.write_all(&header)?;
+
+        Ok(Self::SerializeTupleStruct::new(self.ser, len, ttype))
+    }
+
     fn serialize_tuple_variant(
         self,
         _name: &'static str,
@@ -269,8 +287,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     unsupported!(serialize_unit);
     unsupported!(serialize_unit_struct, &'static str);
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
-    
+
     unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
     unsupported!(serialize_tuple -> SerializeTuple, usize);
-    unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
 }
