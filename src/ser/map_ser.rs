@@ -184,13 +184,18 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
 
     fn serialize_str(self, v: &str) -> std::result::Result<Self::Ok, Self::Error> {
         let mut data = make_header(TagType::String, self.key.as_ref().unwrap());
+        data.extend((v.len() as u16).to_be_bytes());
         data.extend(v.as_bytes());
         self.ser.0.write_all(&data)?;
         Ok(())
     }
 
-    fn serialize_bytes(self, _v: &[u8]) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
+    fn serialize_bytes(self, v: &[u8]) -> std::result::Result<Self::Ok, Self::Error> {
+        let mut data = make_header(TagType::ByteArray, self.key.as_ref().unwrap());
+        data.extend((v.len() as u16).to_be_bytes());
+        data.extend(v);
+        self.ser.0.write_all(&data)?;
+        Ok(())
     }
 
     #[inline]
