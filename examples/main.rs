@@ -1,14 +1,15 @@
-use nbt_rust::ser::to_writer;
+use nbt_rust::to_writer;
+use serde::{Serialize, Deserialize};
 use std::io::Cursor;
 
-#[derive(serde::Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct GameData {
     name: String,
     version: u64,
     player: Player,
 }
 
-#[derive(serde::Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Player {
     name: String,
     health: u32,
@@ -28,6 +29,6 @@ fn main() {
     };
 
     to_writer(&mut writer, &game_data).unwrap();
-
-    println!("{:?}", String::from_utf8(writer.into_inner()).unwrap());
+    let buffer = writer.into_inner();
+    println!("{:?}", String::from_utf8(buffer.clone()).unwrap());
 }

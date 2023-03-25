@@ -5,8 +5,8 @@ mod ser;
 mod unsupported;
 
 pub use self::ser::Serializer;
-use crate::error::Result;
 
+use crate::error::Result;
 use serde::Serialize;
 use std::io::Write;
 
