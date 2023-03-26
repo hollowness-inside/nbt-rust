@@ -33,13 +33,15 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq;
-    type SerializeTuple;
-    type SerializeTupleStruct;
-    type SerializeTupleVariant;
+    type SerializeSeq = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTuple = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
+
+    // TODO: implement
     type SerializeMap = MapSerializer<'a, W>;
-    type SerializeStruct;
-    type SerializeStructVariant;
+    type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
     fn serialize_bool(self, v: bool) -> std::result::Result<Self::Ok, Self::Error> {
         unimplemented!()
@@ -187,7 +189,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
     ) -> std::result::Result<Self::SerializeMap, Self::Error> {
         self.0.write_all(&[TagType::Compound as u8]);
         Ok(Self::SerializeMap {
-            ser: self.0,
+            ser: self,
             key: None,
         })
     }
@@ -211,12 +213,12 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
     }
 }
 
-pub struct MapSerializer<'k, W> {
-    writer: W,
-    key: Option<&'k [u8]>,
+pub struct MapSerializer<'a, W> {
+    ser: &'a mut Serializer<W>,
+    key: Option<Vec<u8>>,
 }
 
-impl<'a, 'k, W: Write> serde::ser::SerializeMap for MapSerializer<'k, W> {
+impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
     type Ok = ();
     type Error = Error;
 
@@ -224,10 +226,10 @@ impl<'a, 'k, W: Write> serde::ser::SerializeMap for MapSerializer<'k, W> {
     where
         T: Serialize,
     {
-        let mut key = vec![];
-        let mut serializer = KeySerializer::new(&mut key);
-        key.serialize(&mut serializer);
-        self.key = Some(&key);
+        let mut out = Vec::new();
+        key.serialize(&mut KeySerializer::new(&mut out));
+
+        self.key = Some(out);
         Ok(())
     }
 
@@ -249,47 +251,56 @@ impl<'a, 'k, W: Write> serde::ser::SerializeMap for MapSerializer<'k, W> {
     }
 }
 
-impl<'a, 'k, W: Write> serde::Serializer for &'a mut MapSerializer<'k, W> {
+#[inline]
+pub(crate) fn make_header(tag_type: TagType, name: &[u8]) -> Vec<u8> {
+    let mut res = vec![tag_type as u8];
+    res.extend((name.len() as u16).to_be_bytes());
+    res.extend(name);
+    res
+}
+
+impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq;
-    type SerializeTuple;
-    type SerializeTupleStruct;
-    type SerializeTupleVariant;
-    type SerializeMap;
-    type SerializeStruct;
-    type SerializeStructVariant;
+    type SerializeSeq = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTuple = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
+
+    type SerializeMap = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
     fn serialize_bool(self, v: bool) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i8(if v { 1 } else { 0 })
     }
 
     fn serialize_i8(self, v: i8) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Byte, self.key.unwrap());
+        let mut data = make_header(TagType::Byte, self.key.as_ref().unwrap());
         data.push(v as u8);
-        self.writer.write_all(&data)?;
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
     fn serialize_i16(self, v: i16) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Short, self.key.unwrap());
-        data.push(v.to_be_bytes());
-        self.writer.write_all(&data)?;
+        let mut data = make_header(TagType::Short, self.key.as_ref().unwrap());
+        data.extend(v.to_be_bytes());
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
     fn serialize_i32(self, v: i32) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Int, self.key.unwrap());
-        data.push(v.to_be_bytes());
-        self.writer.write_all(&data)?;
+        let mut data = make_header(TagType::Int, self.key.as_ref().unwrap());
+        data.extend(v.to_be_bytes());
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
     fn serialize_i64(self, v: i64) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Long, self.key.unwrap());
-        data.push(v.to_be_bytes());
-        self.writer.write_all(&data)?;
+        let mut data = make_header(TagType::Long, self.key.as_ref().unwrap());
+        data.extend(v.to_be_bytes());
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
@@ -310,16 +321,16 @@ impl<'a, 'k, W: Write> serde::Serializer for &'a mut MapSerializer<'k, W> {
     }
 
     fn serialize_f32(self, v: f32) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Float, self.key.unwrap());
-        data.push(v.to_be_bytes());
-        self.writer.write_all(&data)?;
+        let mut data = make_header(TagType::Float, self.key.as_ref().unwrap());
+        data.extend(v.to_be_bytes());
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
     fn serialize_f64(self, v: f64) -> std::result::Result<Self::Ok, Self::Error> {
-        let mut data = make_header(TagType::Double, self.key.unwrap());
-        data.push(v.to_be_bytes());
-        self.writer.write_all(&data)?;
+        let mut data = make_header(TagType::Double, self.key.as_ref().unwrap());
+        data.extend(v.to_be_bytes());
+        self.ser.0.write_all(&data)?;
         Ok(())
     }
 
@@ -447,8 +458,8 @@ impl<'a, 'k, W: Write> serde::Serializer for &'a mut MapSerializer<'k, W> {
 
 pub struct KeySerializer<'a>(&'a mut [u8]);
 
-impl KeySerializer<'_> {
-    pub fn new(output: &mut [u8]) -> Self {
+impl<'a> KeySerializer<'a> {
+    pub fn new(output: &'a mut [u8]) -> Self {
         Self(output)
     }
 }
@@ -457,13 +468,13 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
     type Ok = ();
     type Error = Error;
 
-    type SerializeSeq;
-    type SerializeTuple;
-    type SerializeTupleStruct;
-    type SerializeTupleVariant;
-    type SerializeMap;
-    type SerializeStruct;
-    type SerializeStructVariant;
+    type SerializeSeq = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTuple = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeTupleVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeMap = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
     fn serialize_bool(self, v: bool) -> std::result::Result<Self::Ok, Self::Error> {
         unimplemented!()
