@@ -11,6 +11,7 @@ pub enum Error {
     ElementTypesDiffer,
     UnknownSize,
     MissingKey,
+    Unsupported(String),
 }
 
 impl From<io::Error> for Error {
@@ -49,6 +50,7 @@ impl fmt::Display for Error {
             Error::ElementTypesDiffer => write!(f, "Element types differ"),
             Error::UnknownSize => write!(f, "Size must be specified"),
             Error::MissingKey => write!(f, "Missing key"),
+            Error::Unsupported(name) => write!(f, "Unsupported method: {name}"),
         }
     }
 }

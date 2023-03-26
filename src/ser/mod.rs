@@ -1,10 +1,11 @@
 mod key_ser;
 mod map_ser;
 mod ser;
+mod unsupported;
 
-pub use ser::Serializer;
-
+pub use self::ser::Serializer;
 use crate::error::Result;
+
 use serde::Serialize;
 use std::io::Write;
 

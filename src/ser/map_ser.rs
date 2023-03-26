@@ -4,7 +4,11 @@ use serde::Serialize;
 
 use crate::{error::Error, nbt_tag::TagType};
 
-use super::{key_ser::KeySerializer, Serializer};
+use super::{
+    key_ser::KeySerializer,
+    unsupported::{self, unsupported},
+    Serializer,
+};
 
 pub struct MapSerializer<'a, W> {
     pub(super) ser: &'a mut Serializer<W>,
@@ -174,8 +178,8 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         Ok(())
     }
 
-    fn serialize_char(self, _v: char) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
+    fn serialize_char(self, v: char) -> std::result::Result<Self::Ok, Self::Error> {
+        self.serialize_i8(v as i8)
     }
 
     fn serialize_str(self, v: &str) -> std::result::Result<Self::Ok, Self::Error> {
@@ -189,35 +193,11 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         todo!()
     }
 
-    fn serialize_none(self) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-
-    fn serialize_some<T: ?Sized>(self, _value: &T) -> std::result::Result<Self::Ok, Self::Error>
+    fn serialize_some<T: ?Sized>(self, value: &T) -> std::result::Result<Self::Ok, Self::Error>
     where
         T: Serialize,
     {
-        todo!()
-    }
-
-    fn serialize_unit(self) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-
-    fn serialize_unit_struct(
-        self,
-        _name: &'static str,
-    ) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-
-    fn serialize_unit_variant(
-        self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-    ) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
+        value.serialize(self)
     }
 
     fn serialize_newtype_struct<T: ?Sized>(
@@ -278,9 +258,9 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
 
     fn serialize_map(
         self,
-        _len: Option<usize>,
+        len: Option<usize>,
     ) -> std::result::Result<Self::SerializeMap, Self::Error> {
-        todo!()
+        self.ser.serialize_map(len)
     }
 
     fn serialize_struct(
@@ -293,11 +273,17 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
 
     fn serialize_struct_variant(
         self,
-        _name: &'static str,
-        _variant_index: u32,
-        _variant: &'static str,
-        _len: usize,
+        name: &'static str,
+        variant_index: u32,
+        variant: &'static str,
+        len: usize,
     ) -> std::result::Result<Self::SerializeStructVariant, Self::Error> {
-        todo!()
+        self.ser
+            .serialize_struct_variant(name, variant_index, variant, len)
     }
+
+    unsupported!(serialize_none);
+    unsupported!(serialize_unit);
+    unsupported!(serialize_unit_struct, &'static str);
+    unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
 }
