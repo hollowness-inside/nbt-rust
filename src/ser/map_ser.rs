@@ -225,29 +225,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     {
         todo!()
     }
-
-    fn serialize_seq(
-        self,
-        _len: Option<usize>,
-    ) -> std::result::Result<Self::SerializeSeq, Self::Error> {
-        todo!()
-    }
-
-    fn serialize_tuple(
-        self,
-        _len: usize,
-    ) -> std::result::Result<Self::SerializeTuple, Self::Error> {
-        todo!()
-    }
-
-    fn serialize_tuple_struct(
-        self,
-        _name: &'static str,
-        _len: usize,
-    ) -> std::result::Result<Self::SerializeTupleStruct, Self::Error> {
-        todo!()
-    }
-
+    
     fn serialize_tuple_variant(
         self,
         _name: &'static str,
@@ -291,4 +269,8 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     unsupported!(serialize_unit);
     unsupported!(serialize_unit_struct, &'static str);
     unsupported!(serialize_unit_variant, &'static str, u32, &'static str);
+    
+    unsupported!(serialize_seq -> SerializeSeq, Option<usize>);
+    unsupported!(serialize_tuple -> SerializeTuple, usize);
+    unsupported!(serialize_tuple_struct -> SerializeTupleStruct, &'static str, usize);
 }
