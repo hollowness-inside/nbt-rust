@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::{env::set_current_dir, io::Write};
 
 use serde::Serialize;
 
@@ -40,8 +40,8 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
 
     // TODO: implement
     type SerializeMap = MapSerializer<'a, W>;
-    type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeStruct = MapSerializer<'a, W>;
+    type SerializeStructVariant = MapSerializer<'a, W>;
 
     fn serialize_bool(self, v: bool) -> std::result::Result<Self::Ok, Self::Error> {
         unimplemented!()
@@ -199,7 +199,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         name: &'static str,
         len: usize,
     ) -> std::result::Result<Self::SerializeStruct, Self::Error> {
-        unimplemented!()
+        self.serialize_map(None)
     }
 
     fn serialize_struct_variant(
@@ -209,7 +209,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         variant: &'static str,
         len: usize,
     ) -> std::result::Result<Self::SerializeStructVariant, Self::Error> {
-        unimplemented!()
+        self.serialize_map(None)
     }
 }
 
@@ -247,6 +247,33 @@ impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
     }
 
     fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
+        self.ser.0.write_all(&[0x00]);
+        Ok(())
+    }
+}
+
+impl<'a, W: Write> serde::ser::SerializeStruct for MapSerializer<'a, W> {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        key: &'static str,
+        value: &T,
+    ) -> std::result::Result<(), Self::Error>
+    where
+        T: Serialize,
+    {
+        <Self as serde::ser::SerializeMap>::serialize_key(self, key);
+        <Self as serde::ser::SerializeMap>::serialize_value(self, value);
+
+        Ok(())
+    }
+
+    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
+        <Self as serde::ser::SerializeMap>::end(self)
+    }
+}
         todo!()
     }
 }
@@ -268,9 +295,9 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     type SerializeTupleStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
     type SerializeTupleVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
-    type SerializeMap = serde::ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
-    type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
+    type SerializeMap = MapSerializer<'a, W>;
+    type SerializeStruct = MapSerializer<'a, W>;
+    type SerializeStructVariant = MapSerializer<'a, W>;
 
     fn serialize_bool(self, v: bool) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i8(if v { 1 } else { 0 })
@@ -339,7 +366,10 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
     }
 
     fn serialize_str(self, v: &str) -> std::result::Result<Self::Ok, Self::Error> {
-        todo!()
+        let mut data = make_header(TagType::String, self.key.as_ref().unwrap());
+        data.extend(v.as_bytes());
+        self.ser.0.write_all(&data)?;
+        Ok(())
     }
 
     fn serialize_bytes(self, v: &[u8]) -> std::result::Result<Self::Ok, Self::Error> {
@@ -442,7 +472,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         name: &'static str,
         len: usize,
     ) -> std::result::Result<Self::SerializeStruct, Self::Error> {
-        todo!()
+        self.ser.serialize_struct(name, len)
     }
 
     fn serialize_struct_variant(
