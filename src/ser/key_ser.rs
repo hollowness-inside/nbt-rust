@@ -26,10 +26,12 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
     type SerializeStruct = serde::ser::Impossible<Self::Ok, Self::Error>;
     type SerializeStructVariant = serde::ser::Impossible<Self::Ok, Self::Error>;
 
+    #[inline]
     fn serialize_char(self, v: char) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_bytes(&[v as u8])
     }
 
+    #[inline]
     fn serialize_str(self, v: &str) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_bytes(v.as_bytes())
     }
@@ -39,6 +41,7 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
         Ok(())
     }
 
+    #[inline]
     fn serialize_some<T: ?Sized>(self, value: &T) -> std::result::Result<Self::Ok, Self::Error>
     where
         T: Serialize,

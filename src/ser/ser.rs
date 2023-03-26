@@ -49,6 +49,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         })
     }
 
+    #[inline]
     fn serialize_struct(
         self,
         _name: &'static str,
@@ -57,6 +58,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         self.serialize_map(None)
     }
 
+    #[inline]
     fn serialize_struct_variant(
         self,
         _name: &'static str,

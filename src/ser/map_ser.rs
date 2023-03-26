@@ -4,11 +4,7 @@ use serde::Serialize;
 
 use crate::{error::Error, nbt_tag::TagType};
 
-use super::{
-    key_ser::KeySerializer,
-    unsupported::{self, unsupported},
-    Serializer,
-};
+use super::{key_ser::KeySerializer, unsupported::unsupported, Serializer};
 
 pub struct MapSerializer<'a, W> {
     pub(super) ser: &'a mut Serializer<W>,
@@ -148,18 +144,22 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         Ok(())
     }
 
+    #[inline]
     fn serialize_u8(self, v: u8) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i8(v as i8)
     }
 
+    #[inline]
     fn serialize_u16(self, v: u16) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i16(v as i16)
     }
 
+    #[inline]
     fn serialize_u32(self, v: u32) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i32(v as i32)
     }
 
+    #[inline]
     fn serialize_u64(self, v: u64) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i64(v as i64)
     }
@@ -178,6 +178,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         Ok(())
     }
 
+    #[inline]
     fn serialize_char(self, v: char) -> std::result::Result<Self::Ok, Self::Error> {
         self.serialize_i8(v as i8)
     }
@@ -193,6 +194,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         todo!()
     }
 
+    #[inline]
     fn serialize_some<T: ?Sized>(self, value: &T) -> std::result::Result<Self::Ok, Self::Error>
     where
         T: Serialize,
@@ -256,6 +258,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         todo!()
     }
 
+    #[inline]
     fn serialize_map(
         self,
         len: Option<usize>,
@@ -263,6 +266,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         self.ser.serialize_map(len)
     }
 
+    #[inline]
     fn serialize_struct(
         self,
         name: &'static str,
@@ -271,6 +275,7 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         self.ser.serialize_struct(name, len)
     }
 
+    #[inline]
     fn serialize_struct_variant(
         self,
         name: &'static str,
