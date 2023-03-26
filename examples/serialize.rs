@@ -1,4 +1,4 @@
-use nbt_rust::{to_writer, NbtTag};
+use nbt_rust::{ser::to_writer};
 use std::io::Cursor;
 
 #[derive(serde::Serialize)]
@@ -12,7 +12,7 @@ struct GameData {
 struct Player {
     name: String,
     health: u32,
-    position: NbtTag,
+    // position: NbtTag,
 }
 
 fn main() {
@@ -25,7 +25,7 @@ fn main() {
         player: Player {
             name: "Player 1".to_string(),
             health: 100,
-            position: NbtTag::LongArray(vec![1,2,3,4]),
+            // position: NbtTag::LongArray(vec![1,2,3,4]),
         },
     };
 
