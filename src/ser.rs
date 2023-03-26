@@ -274,7 +274,27 @@ impl<'a, W: Write> serde::ser::SerializeStruct for MapSerializer<'a, W> {
         <Self as serde::ser::SerializeMap>::end(self)
     }
 }
-        todo!()
+
+impl<'a, W: Write> serde::ser::SerializeStructVariant for MapSerializer<'a, W> {
+    type Ok = ();
+    type Error = Error;
+
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        key: &'static str,
+        value: &T,
+    ) -> std::result::Result<(), Self::Error>
+    where
+        T: Serialize,
+    {
+        <Self as serde::ser::SerializeMap>::serialize_key(self, key);
+        <Self as serde::ser::SerializeMap>::serialize_value(self, value);
+
+        Ok(())
+    }
+
+    fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
+        <Self as serde::ser::SerializeMap>::end(self)
     }
 }
 
