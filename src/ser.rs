@@ -13,7 +13,7 @@ where
     S: Serialize,
 {
     let mut serializer = Serializer::new(writer);
-    value.serialize(&mut serializer);
+    value.serialize(&mut serializer)?;
     Ok(())
 }
 
@@ -187,7 +187,7 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         self,
         _len: Option<usize>,
     ) -> std::result::Result<Self::SerializeMap, Self::Error> {
-        self.0.write_all(&[TagType::Compound as u8]);
+        self.0.write_all(&[TagType::Compound as u8])?;
         Ok(Self::SerializeMap {
             ser: self,
             key: None,
@@ -227,7 +227,7 @@ impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
         T: Serialize,
     {
         let mut out = Vec::new();
-        key.serialize(&mut KeySerializer::new(&mut out));
+        key.serialize(&mut KeySerializer::new(&mut out))?;
 
         self.key = Some(out);
         Ok(())
@@ -241,13 +241,13 @@ impl<'a, W: Write> serde::ser::SerializeMap for MapSerializer<'a, W> {
             unimplemented!();
         }
 
-        value.serialize(self);
+        value.serialize(self)?;
 
         Ok(())
     }
 
     fn end(self) -> std::result::Result<Self::Ok, Self::Error> {
-        self.ser.0.write_all(&[0x00]);
+        self.ser.0.write_all(&[0x00])?;
         Ok(())
     }
 }
@@ -264,8 +264,8 @@ impl<'a, W: Write> serde::ser::SerializeStruct for MapSerializer<'a, W> {
     where
         T: Serialize,
     {
-        <Self as serde::ser::SerializeMap>::serialize_key(self, key);
-        <Self as serde::ser::SerializeMap>::serialize_value(self, value);
+        <Self as serde::ser::SerializeMap>::serialize_key(self, key)?;
+        <Self as serde::ser::SerializeMap>::serialize_value(self, value)?;
 
         Ok(())
     }
@@ -287,8 +287,8 @@ impl<'a, W: Write> serde::ser::SerializeStructVariant for MapSerializer<'a, W> {
     where
         T: Serialize,
     {
-        <Self as serde::ser::SerializeMap>::serialize_key(self, key);
-        <Self as serde::ser::SerializeMap>::serialize_value(self, value);
+        <Self as serde::ser::SerializeMap>::serialize_key(self, key)?;
+        <Self as serde::ser::SerializeMap>::serialize_value(self, value)?;
 
         Ok(())
     }
@@ -579,7 +579,7 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
     }
 
     fn serialize_bytes(self, v: &[u8]) -> std::result::Result<Self::Ok, Self::Error> {
-        self.0.write_all(v);
+        self.0.write_all(v)?;
         Ok(())
     }
 
