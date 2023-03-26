@@ -161,7 +161,10 @@ impl<'a, W: Write> serde::Serializer for &'a mut Serializer<W> {
         unimplemented!()
     }
 
-    fn serialize_tuple(self, _len: usize) -> std::result::Result<Self::SerializeTuple, Self::Error> {
+    fn serialize_tuple(
+        self,
+        _len: usize,
+    ) -> std::result::Result<Self::SerializeTuple, Self::Error> {
         unimplemented!()
     }
 
@@ -458,7 +461,10 @@ impl<'a, 'b, W: Write> serde::Serializer for &'a mut MapSerializer<'b, W> {
         todo!()
     }
 
-    fn serialize_tuple(self, _len: usize) -> std::result::Result<Self::SerializeTuple, Self::Error> {
+    fn serialize_tuple(
+        self,
+        _len: usize,
+    ) -> std::result::Result<Self::SerializeTuple, Self::Error> {
         todo!()
     }
 
@@ -645,7 +651,10 @@ impl<'a, 'k> serde::Serializer for &'a mut KeySerializer<'k> {
         unimplemented!()
     }
 
-    fn serialize_tuple(self, _len: usize) -> std::result::Result<Self::SerializeTuple, Self::Error> {
+    fn serialize_tuple(
+        self,
+        _len: usize,
+    ) -> std::result::Result<Self::SerializeTuple, Self::Error> {
         unimplemented!()
     }
 

@@ -1,4 +1,4 @@
-use nbt_rust::{ser::to_writer};
+use nbt_rust::ser::to_writer;
 use std::io::Cursor;
 
 #[derive(serde::Serialize)]
